@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Backend/Backend.iml" filepath="$PROJECT_DIR$/Backend/Backend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Complier.iml" filepath="$PROJECT_DIR$/Complier.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ErrorHandler/ErrorHandler.iml" filepath="$PROJECT_DIR$/ErrorHandler/ErrorHandler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/InputSystem/InputSystem.iml" filepath="$PROJECT_DIR$/InputSystem/InputSystem.iml" />
+      <module fileurl="file://$PROJECT_DIR$/LLVM/LLVM.iml" filepath="$PROJECT_DIR$/LLVM/LLVM.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Lexer/Lexer.iml" filepath="$PROJECT_DIR$/Lexer/Lexer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Parser/Parser.iml" filepath="$PROJECT_DIR$/Parser/Parser.iml" />
+    </modules>
+  </component>
+</project>

@@ -1,0 +1,14 @@
+import xiaoxue.keai
+
+func xiaoxue(shengao) {
+    shen_gao = shengao
+    name = "zrx"
+    weather = 123
+    work = 23.567
+    if weather > 100 and work <= 40 {
+        name = "good"
+    } elif shen_gao == shengao {
+        shen_gao += shengao
+        shengao = shengao + 2
+    } else return
+}

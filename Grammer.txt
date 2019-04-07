@@ -1,0 +1,113 @@
+Program -> ExtDefList
+ExtDefList -> ExtDefList ExtDef | ε
+ExtDef -> ImportDeclaration
+        | ClassDeclaration
+        | FuncDeclaration
+        | StmtList
+
+ImportDeclaration -> IMPORT PackageChain
+PackageChain -> IDENTIFIER | PackageChain . IDENTIFIER
+
+ClassDeclaration -> CLASS IDENTIFIER SuperOpt ClassBody
+SuperOpt -> : Super | ε
+Super -> Super , PackageChain | PackageChain
+ClassBody -> { ClassBodyDeclarations }
+ClassBodyDeclarations -> ClassBodyDeclaration
+                       | ClassBodyDeclarations ClassBodyDeclaration
+ClassBodyDeclaration -> ClassMemberDeclaration
+                       | FuncDeclaration
+ClassMemberDeclaration -> Assignment
+FuncDeclaration -> FUNC IDENTIFIER ( ParamListOpt ) CompSt
+                 | FUNC IDENTIFIER ( ParamListOpt )
+ParamListOpt -> ParamList | ε
+ParamList -> IDENTIFIER | ParamList , IDENTIFIER
+
+
+
+Dictionary -> { MapListOpt }
+MapListOpt -> MapList | ε
+MapList -> MapList , Map | Map
+Map -> Primary : Item
+List -> [ ItemListOpt ]
+ItemListOpt -> ItemList | ε
+ItemList -> ItemList , Item | Item
+TupleStart ->  Item , Item  TupleFollowOpt
+TupleFollowOpt -> TupleFollow | ε
+TupleFollow -> TupleFollow , Item | Item
+Item -> Primary | Dict | List | Tuple
+Tuple -> ( TupleStart ) | TupleStart
+ListAndTuple -> List | Tuple
+
+CompSt -> { StmtListOpt }
+StmtListOpt -> StmtList | ε
+StmtList -> StmtList Stmt | Stmt
+Stmt -> Exp
+      | MultiAssignment
+      | CompSt
+      | RETURN Exp
+      | IfElseStmt
+      | REPEAT NoAssignExp CompSt
+      | REPEAT ParamList IN NoAssignExp CompSt
+
+IfStmt -> IF NoAssignExp CompSt
+IfElseStmt -> IfStmt
+            | IfElseStmt ELSE CompSt
+
+FuncInvocation -> IDENTIFIER ( ) | IDENTIFIER ( Args )
+AssignableValue -> Variable . IDENTIFIER
+                 | Variable [ Variable ]
+                 | Variable [ STRING ]
+                 | Variable [ NUM ]
+                 | Variable [ Exp ]
+                 | IDENTIFIER
+
+Variable -> AssignableValue
+          | Variable . FuncInvocation
+          | FuncInvocation
+          | SELF
+
+Primary -> ( NoAssignExp )
+         | Variable
+         | NUM
+         | REAL
+         | STRING
+
+UnaryExp -> Primary
+          | - Primary
+          | NOT Primary
+
+MultiplicativeExp -> UnaryExp
+                   | MultiplicativeExp * UnaryExp
+                   | MultiplicativeExp / UnaryExp
+                   | MultiplicativeExp % UnaryExp
+AdditiveExp -> MultiplicativeExp
+             | AdditiveExp + MultiplicativeExp
+             | AdditiveExp - MultiplicativeExp
+RelationExp -> AdditiveExp
+             | RelationExp < AdditiveExp
+             | RelationExp > AdditiveExp
+             | RelationExp <= AdditiveExp
+             | RelationExp >= AdditiveExp
+EqualityExp -> RelationExp
+             | EqualityExp == RelationExp
+             | EqualityExp != RelationExp
+ConditionAndExp -> EqualityExp
+             | ConditionAndExp AND EqualityExp
+ConditionOrExp -> ConditionAndExp
+                | ConditionOrExp OR ConditionAndExp
+NoAssignExp -> ConditionOrExp
+AssignmentExp -> NoAssignExp
+               | Assignment
+Assignment -> LeftSide = AssignmentExp
+            | MultiAssignment
+LeftSide -> AssignableValue | Tuple | List
+MultiAssignment -> ListAndTuple = ListAndTuple
+                | AssignableValue = Dict
+                | AssignableValue = List
+                | AssignableValue = Tuple
+
+Exp -> AssignmentExp
+Args -> Args , Exp | Exp
+
+
+
