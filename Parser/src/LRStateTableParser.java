@@ -12,10 +12,22 @@ public class LRStateTableParser {
     private Stack<Object> valueStack = new Stack<>();
     private Stack<Tag> parseStack = new Stack<>();
 
+    // Executor
+    private Executor executor;
+    private int execMode = 0;
+
     private HashMap<Integer, HashMap<Tag, Integer>> lrStateTable;
 
     private Tag inputTag;
     private Token inputToken;
+
+    private void initExecutor() {
+        if (executor != null) return;
+        if (execMode == 0)
+            executor = new Interpreter(valueStack);
+        else if (execMode == 1)
+            executor = new CodeGenerator();
+    }
 
     public LRStateTableParser(CodeFile parseFile) {
         this.parseFile = parseFile;
@@ -28,6 +40,9 @@ public class LRStateTableParser {
         inputTag = Tag.ExtDefList;
         parseStack.push(inputTag);
         // Tree Builder
+
+        initExecutor();
+
 
     }
 
