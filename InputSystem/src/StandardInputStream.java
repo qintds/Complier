@@ -1,5 +1,3 @@
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class StandardInputStream implements InputStreamInterface {

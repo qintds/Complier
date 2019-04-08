@@ -83,7 +83,8 @@ public class Lexer {
                 continue;
             }
             if (t.tag == Tag.End) {
-                 break;
+                presentLine.append(t);
+                break;
             }
             // pre-process for += -= *= /= %=
             presentLine.append(t);

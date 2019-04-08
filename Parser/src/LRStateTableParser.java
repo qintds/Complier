@@ -37,7 +37,7 @@ public class LRStateTableParser {
         valueStack.push(null);
 
         lrStateTable = GrammarStateManager.getInstance().getLRStateTable();
-        inputTag = Tag.ExtDef;
+        inputTag = Tag.ExtDefList;
         inputToken = nextToken();
         parseStack.push(inputTag);
         // Tree Builder

@@ -120,9 +120,9 @@ public class GrammarInitializer {
         generateProduction(Tag.TupleFollow, new Tag[]{Tag.Item}, false);
 //        Item -> Primary | Dictionary | List | Tuple
         generateProduction(Tag.Item, new Tag[]{Tag.Primary}, false);
-        generateProduction(Tag.Item, new Tag[]{Tag.Dictionary}, false);
-        generateProduction(Tag.Item, new Tag[]{Tag.List}, false);
-        generateProduction(Tag.Item, new Tag[]{Tag.Tuple}, false);
+        //generateProduction(Tag.Item, new Tag[]{Tag.Dictionary}, false);
+        //generateProduction(Tag.Item, new Tag[]{Tag.List}, false);
+        //generateProduction(Tag.Item, new Tag[]{Tag.Tuple}, false);
 //        Tuple -> ( TupleStart ) | TupleStart
         generateProduction(Tag.Tuple, new Tag[]{Tag.LBracket, Tag.TupleStart, Tag.RBracket}, false);
         generateProduction(Tag.Tuple, new Tag[]{Tag.TupleStart}, false);

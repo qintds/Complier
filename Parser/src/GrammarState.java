@@ -25,6 +25,11 @@ public class GrammarState {
         this.stateNum = totalStatesCount;
         this.productions = productions;
         this.closureSet.addAll(this.productions);
+
+        System.out.println(stateNum);
+        if (stateNum>10000) {
+            System.out.println("stop");
+        }
     }
 
     public void startTransition() {

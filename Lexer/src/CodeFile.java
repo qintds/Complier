@@ -31,8 +31,10 @@ public class CodeFile {
     public Token next() {
         if (presentTokenNum >= presentLine.totalTokenCount) {
             presentTokenNum = 0;
-            presentLineNum++;
-            presentLine = lineList.get(presentLineNum);
+            if (presentLineNum >= lineList.size())
+                return presentToken;
+            else
+                presentLine = lineList.get(presentLineNum++);
         }
         previousToken = presentToken;
         presentToken = presentLine.get(presentTokenNum++);
