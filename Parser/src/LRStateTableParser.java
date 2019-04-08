@@ -26,6 +26,7 @@ public class LRStateTableParser {
 
         lrStateTable = GrammarStateManager.getInstance().lrStateTable;
         inputTag = Tag.ExtDefList;
+        parseStack.push(inputTag);
         // Tree Builder
 
     }
@@ -44,11 +45,12 @@ public class LRStateTableParser {
                 // shift
                 // push status, push tag
                 statusStack.push(action);
-                parseStack.push(inputTag);
+
 
 
                 // shift when terminal, goto when non terminal
                 if (Tag.isTerminal(inputTag)) {
+                    parseStack.push(inputTag);
                     valueStack.push(inputToken);
                     envMove();
                     // read
@@ -112,8 +114,6 @@ public class LRStateTableParser {
     }
 
     private void doReduce(int productionNum) {
-        switch (productionNum) {
-            case GrammarEnum.AdditiveExp_To_AdditiveExp_Add_MultiplicativeExp.ordinal()
-        }
+
     }
 }

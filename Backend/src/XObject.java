@@ -1,5 +1,5 @@
-public abstract class xObject {
-    Tag xType;
+public abstract class XObject {
+    XType type;
     int refCount;
 
     public abstract void print();

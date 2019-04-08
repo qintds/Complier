@@ -1,4 +1,4 @@
-public class xNumObject extends xObject {
+public class XNumObject extends XObject {
     int value;
 
     @Override
