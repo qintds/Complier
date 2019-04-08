@@ -111,7 +111,7 @@ public class GrammarState {
         ArrayList<Production> partitionProductions = partition.get(tag);
         ArrayList<Production> nextStateProductions = new ArrayList<Production>();
 
-        for (int i = 0; i < productions.size(); i++) {
+        for (int i = 0; i < partitionProductions.size(); i++) {
             Production production =  partitionProductions.get(i);
             nextStateProductions.add(production.dotForward());
         }

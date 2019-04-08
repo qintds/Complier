@@ -36,8 +36,9 @@ public class LRStateTableParser {
         statusStack.push(0);
         valueStack.push(null);
 
-        lrStateTable = GrammarStateManager.getInstance().lrStateTable;
-        inputTag = Tag.ExtDefList;
+        lrStateTable = GrammarStateManager.getInstance().getLRStateTable();
+        inputTag = Tag.ExtDef;
+        inputToken = nextToken();
         parseStack.push(inputTag);
         // Tree Builder
 
@@ -85,7 +86,7 @@ public class LRStateTableParser {
                 // reduce
                 int reduceProductionNum = - action;
                 Production production = ProductionManager.getInstance().getProductionByIndex(reduceProductionNum);
-                doReduce(reduceProductionNum);
+                XObject reduceResult = doReduce(reduceProductionNum);
 
                 // pop the length of the production
                 int rightSize = production.right.size();
@@ -97,7 +98,7 @@ public class LRStateTableParser {
                 }
                 inputTag = production.left;
                 parseStack.push(inputTag);
-                //valueStack
+                valueStack.push(reduceResult);
             }
         }
     }
@@ -128,7 +129,7 @@ public class LRStateTableParser {
             envLevel--;
     }
 
-    private void doReduce(int productionNum) {
-
+    private XObject doReduce(int productionNum) {
+        return executor.reduceAction(productionNum);
     }
 }

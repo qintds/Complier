@@ -12,6 +12,8 @@ public class Parser {
         Lexer lexer = new Lexer(null);
         lexer.run();
 
+        LRStateTableParser parser = new LRStateTableParser(lexer.presentFile);
+        parser.parse();
 
     }
 }

@@ -1,3 +1,3 @@
 public interface Executor {
-    public void reduceAction(int productionNum) ;
+    public XObject reduceAction(int productionNum) ;
 }

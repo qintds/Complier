@@ -1,5 +1,9 @@
 public class XNumObject extends XObject {
-    int value;
+    public int value;
+    public XNumObject(Num num) {
+        super(XType.xNum);
+        value = num.value;
+    }
 
     @Override
     public void print() {
