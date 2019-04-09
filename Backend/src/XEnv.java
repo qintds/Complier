@@ -12,7 +12,19 @@ public class XEnv {
     }
 
     public XObject getVariable(String identifier) {
-        return variableMap.get(identifier);
+        XObject obj = variableMap.get(identifier);
+        if (obj == null) {
+            obj = parent.getVariable(identifier);
+            if (obj == null) {
+                // undefined identifier
+            }
+        }
+        return null;
+    }
+
+
+    public void setVariable(String identifier, XObject obj) {
+        variableMap.put(identifier, obj);
     }
 
 }

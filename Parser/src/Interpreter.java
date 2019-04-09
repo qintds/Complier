@@ -4,10 +4,11 @@ public class Interpreter implements Executor {
 
     private Stack<Object> valueStack;
     private XEnv environment;
+    private String address = "";
 
     public Interpreter(Stack<Object> valueStack){
         this.valueStack = valueStack;
-        environment = new XEnv();
+        environment = new XEnv(null);
     }
 
     @Override
@@ -31,6 +32,7 @@ public class Interpreter implements Executor {
             case Primary_To_LBracket_NoAssignExp_RBracket:
                 xObject = (XObject) valueStack.get(valueStack.size() - 2);
                 break;
+                // directly single to single
             case Primary_To_Variable:
             case UnaryExp_To_Primary:
             case MultiplicativeExp_To_UnaryExp:
@@ -40,6 +42,8 @@ public class Interpreter implements Executor {
             case ConditionAndExp_To_EqualityExp:
             case ConditionOrExp_To_ConditionAndExp:
             case NoAssignExp_To_ConditionOrExp:
+            case AssignmentExp_To_NoAssignExp:
+            case AssignmentExp_To_Assignment:
                 xObject = (XObject) valueStack.peek();
                 break;
             case UnaryExp_To_Not_Primary:
@@ -66,6 +70,8 @@ public class Interpreter implements Executor {
                 Token op = (Token)valueStack.get(valueStack.size()-2);
                 xObject = binaryExp(a, b, op);
                 break;
+            case Assignment_To_LeftSide_Assign_AssignmentExp:
+
 
 
         }

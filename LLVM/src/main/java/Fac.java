@@ -35,6 +35,13 @@ public class Fac {
         LLVMBasicBlockRef end = LLVMAppendBasicBlock(fac, "end");
         LLVMBuilderRef builder = LLVMCreateBuilder();
 
+//        LLVMTypeRef[] structContent = { , LLVMDoubleType()};
+//        LLVMTypeRef myStruct = LLVMStructType(LLVMInt32Type(), 2,0);
+
+
+//        LLVMValueRef struct1 = LLVMBuildAlloca(builder, myStruct, "mystruct");
+
+
         LLVMPositionBuilderAtEnd(builder, entry);
         LLVMValueRef If = LLVMBuildICmp(builder, LLVMIntEQ, n, LLVMConstInt(LLVMInt32Type(), 0, 0), "n == 0");
         LLVMBuildCondBr(builder, If, iftrue, iffalse);
