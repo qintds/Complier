@@ -7,4 +7,12 @@ public class XEnv {
 
     public XEnv parent;
 
+    public XEnv(XEnv env) {
+        parent = env;
+    }
+
+    public XObject getVariable(String identifier) {
+        return variableMap.get(identifier);
+    }
+
 }
