@@ -5,6 +5,11 @@ public class XStringObject extends XObject {
         if (word.tag == Tag.String)
             value = word.toString();
     }
+
+    public XStringObject(String s) {
+        super(XType.xString);
+        value = s;
+    }
     @Override
     public void print() {
 

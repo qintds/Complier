@@ -120,15 +120,17 @@ public class GrammarInitializer {
         generateProduction(Tag.TupleFollow, new Tag[]{Tag.Item}, false);
 //        Item -> Primary | Dictionary | List | Tuple
         generateProduction(Tag.Item, new Tag[]{Tag.Primary}, false);
-        //generateProduction(Tag.Item, new Tag[]{Tag.Dictionary}, false);
-        //generateProduction(Tag.Item, new Tag[]{Tag.List}, false);
-        //generateProduction(Tag.Item, new Tag[]{Tag.Tuple}, false);
-//        Tuple -> ( TupleStart ) | TupleStart
+        generateProduction(Tag.Item, new Tag[]{Tag.Dictionary}, false);
+        generateProduction(Tag.Item, new Tag[]{Tag.List}, false);
+        generateProduction(Tag.Item, new Tag[]{Tag.Tuple}, false);
+        // Tuple -> ( TupleStart )
+        // TupleNoBracket -> TupleStart
         generateProduction(Tag.Tuple, new Tag[]{Tag.LBracket, Tag.TupleStart, Tag.RBracket}, false);
-        generateProduction(Tag.Tuple, new Tag[]{Tag.TupleStart}, false);
-//        ListAndTuple -> List | Tuple
+        generateProduction(Tag.TupleNoBracket, new Tag[]{Tag.TupleStart}, false);
+//        ListAndTuple -> List | Tuple | TupleNoBracket
         generateProduction(Tag.ListAndTuple, new Tag[]{Tag.List}, false);
         generateProduction(Tag.ListAndTuple, new Tag[]{Tag.Tuple}, false);
+        generateProduction(Tag.ListAndTuple, new Tag[]{Tag.TupleNoBracket}, false);
 
         // Statement
 //        CompSt -> { StmtListOpt }
@@ -293,19 +295,16 @@ public class GrammarInitializer {
         generateProduction(Tag.Assignment, new Tag[]{Tag.LeftSide, Tag.Assign, Tag.AssignmentExp}, false);
         generateProduction(Tag.Assignment, new Tag[]{Tag.MultiAssignment}, false);
 
-//        LeftSide -> AssignableValue | Tuple | List
+//        LeftSide -> AssignableValue | ListAndTuple
         generateProduction(Tag.LeftSide, new Tag[]{Tag.AssignableValue}, false);
-        generateProduction(Tag.LeftSide, new Tag[]{Tag.Tuple}, false);
-        generateProduction(Tag.LeftSide, new Tag[]{Tag.List}, false);
+        generateProduction(Tag.LeftSide, new Tag[]{Tag.ListAndTuple}, false);
 
 //        MultiAssignment -> ListAndTuple = ListAndTuple
 //                | AssignableValue = Dictionary
-//                | AssignableValue = List
-//                | AssignableValue = Tuple
+//                | AssignableValue = ListAndTuple
         generateProduction(Tag.MultiAssignment, new Tag[]{Tag.ListAndTuple, Tag.Assign, Tag.ListAndTuple}, false);
         generateProduction(Tag.MultiAssignment, new Tag[]{Tag.AssignableValue, Tag.Assign, Tag.Dictionary}, false);
-        generateProduction(Tag.MultiAssignment, new Tag[]{Tag.AssignableValue, Tag.Assign, Tag.List}, false);
-        generateProduction(Tag.MultiAssignment, new Tag[]{Tag.AssignableValue, Tag.Assign, Tag.Tuple}, false);
+        generateProduction(Tag.MultiAssignment, new Tag[]{Tag.AssignableValue, Tag.Assign, Tag.ListAndTuple}, false);
 //
 //        Exp -> AssignmentExp
         generateProduction(Tag.Exp, new Tag[]{Tag.AssignmentExp}, false);

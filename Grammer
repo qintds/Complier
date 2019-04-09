@@ -34,8 +34,11 @@ TupleStart ->  Item , Item  TupleFollowOpt
 TupleFollowOpt -> TupleFollow | ε
 TupleFollow -> TupleFollow , Item | Item
 Item -> Primary | Dictionary | List | Tuple
-Tuple -> ( TupleStart ) | TupleStart
-ListAndTuple -> List | Tuple
+
+Tuple -> ( TupleStart )
+TupleNoBracket -> TupleStart
+
+ListAndTuple -> List | Tuple | TupleNoBracket
 
 CompSt -> { StmtListOpt }
 StmtListOpt -> StmtList | ε
@@ -66,6 +69,7 @@ RepeatCond -> NoAssignExp
 
 
 FuncInvocation -> IDENTIFIER ( ) | IDENTIFIER ( Args )
+
 AssignableValue -> Variable . AssignableValue
                  | Variable [ Variable ]
                  | Variable [ STRING ]
@@ -114,11 +118,10 @@ AssignmentExp -> NoAssignExp
                | Assignment
 Assignment -> LeftSide = AssignmentExp
             | MultiAssignment
-LeftSide -> AssignableValue | Tuple | List
+LeftSide -> AssignableValue | ListAndTuple
 MultiAssignment -> ListAndTuple = ListAndTuple
                 | AssignableValue = Dictionary
-                | AssignableValue = List
-                | AssignableValue = Tuple
+                | AssignableValue = ListAndTuple
 
 Exp -> AssignmentExp
 Args -> Args , Exp | Exp

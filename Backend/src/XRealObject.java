@@ -6,6 +6,16 @@ public class XRealObject extends XObject {
         this.value = real.value;
     }
 
+    public XRealObject(double d) {
+        super(XType.xReal);
+        this.value = d;
+    }
+
+    public XRealObject(int i) {
+        super(XType.xReal);
+        this.value = i;
+    }
+
     @Override
     public void print() {
 

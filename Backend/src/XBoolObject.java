@@ -9,6 +9,11 @@ public class XBoolObject extends XObject{
             value = false;
     }
 
+    public XBoolObject(boolean bool) {
+        super(XType.xBool);
+        value = bool;
+    }
+
 
     @Override
     public void print() {

@@ -92,6 +92,7 @@ public enum Tag {
     TupleFollow,
     Item,
     Tuple,
+    TupleNoBracket,
     ListAndTuple,
     CompSt,
     StmtListOpt,
