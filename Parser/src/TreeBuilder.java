@@ -1,36 +1,40 @@
 import java.util.Stack;
 
-public class TreeBuilder implements Executor {
+public class TreeBuilder{
 
     private Stack<Object> valueStack;
     private XEnv environment;
     private String address = "";
+    private Stack<CNode> nodeStack =new Stack<>();
 
     public TreeBuilder(Stack<Object> valueStack){
         this.valueStack = valueStack;
         environment = new XEnv(null);
     }
 
-    @Override
-    public XObject reduceAction(int productionNum) {
-        XObject xObject = null;
+    public CNode reduceAction(int productionNum) {
+        CNode node = null;
         GrammarEnum n = GrammarEnum.values()[productionNum];
         switch (n) {
             case Primary_To_Num:
-                xObject = new XNumObject((Num)valueStack.peek());
+                node = CNodeFactroy.createCNode(Tag.Primary);
+                node.setObject(new XNumObject((Num)valueStack.peek()));
                 break;
             case Primary_To_Real:
-                xObject =  new XRealObject((Real)valueStack.peek());
+                node = CNodeFactroy.createCNode(Tag.Primary);
+                node.setObject(new XRealObject((Real)valueStack.peek()));
                 break;
             case Primary_To_True:
             case Primary_To_False:
-                xObject = new XBoolObject((Word)valueStack.peek());
+                node = CNodeFactroy.createCNode(Tag.Primary);
+                node.setObject(new XBoolObject((Word)valueStack.peek()));
                 break;
             case Primary_To_String:
-                xObject = new XStringObject((Word)valueStack.peek());
+                node = CNodeFactroy.createCNode(Tag.Primary);
+                node.setObject(new XStringObject((Word)valueStack.peek()));
                 break;
             case Primary_To_LBracket_NoAssignExp_RBracket:
-                xObject = (XObject) valueStack.get(valueStack.size() - 2);
+                node = (CNode)valueStack.get(valueStack.size() - 2);
                 break;
                 // directly single to single
             case Primary_To_Variable:
@@ -44,7 +48,7 @@ public class TreeBuilder implements Executor {
             case NoAssignExp_To_ConditionOrExp:
             case AssignmentExp_To_NoAssignExp:
             case AssignmentExp_To_Assignment:
-                xObject = (XObject) valueStack.peek();
+                node = (CNode) valueStack.peek();
                 break;
             case UnaryExp_To_Not_Primary:
                 unaryExpNot((XObject) valueStack.peek());
@@ -75,7 +79,11 @@ public class TreeBuilder implements Executor {
 
 
         }
-        return xObject;
+
+        if (node != null) {
+            node.production = n;
+        }
+        return node;
     }
 
 
