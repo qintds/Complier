@@ -24,7 +24,7 @@ public class LRStateTableParser {
     private void initExecutor() {
         if (executor != null) return;
         if (execMode == 0)
-            executor = new Interpreter(valueStack);
+            executor = new TreeBuilder(valueStack);
         else if (execMode == 1)
             executor = new CodeGenerator();
     }

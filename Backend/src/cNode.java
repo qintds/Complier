@@ -5,5 +5,6 @@ public class cNode {
     private cNode parent;
     private ArrayList<cNode> children;
     String name;
+    XObject object;
 
 }
