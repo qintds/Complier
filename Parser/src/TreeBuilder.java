@@ -1,3 +1,6 @@
+import org.omg.CORBA.NO_IMPLEMENT;
+import sun.security.pkcs11.wrapper.CK_NOTIFY;
+
 import java.util.Stack;
 
 public class TreeBuilder{
@@ -14,6 +17,9 @@ public class TreeBuilder{
 
     public CNode reduceAction(int productionNum) {
         CNode node = null;
+        CNode temp = null;
+        // when collapsing single to single reduction, don't refresh node's production num
+        boolean collapse = false;
         GrammarEnum n = GrammarEnum.values()[productionNum];
         switch (n) {
             case Primary_To_Num:
@@ -34,7 +40,8 @@ public class TreeBuilder{
                 node.setObject(new XStringObject((Word)valueStack.peek()));
                 break;
             case Primary_To_LBracket_NoAssignExp_RBracket:
-                node = (CNode)valueStack.get(valueStack.size() - 2);
+                node = CNodeFactroy.createCNode(Tag.Primary);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 2));
                 break;
                 // directly single to single
             case Primary_To_Variable:
@@ -48,13 +55,15 @@ public class TreeBuilder{
             case NoAssignExp_To_ConditionOrExp:
             case AssignmentExp_To_NoAssignExp:
             case AssignmentExp_To_Assignment:
+                collapse = true;
                 node = (CNode) valueStack.peek();
+                //node = CNodeFactroy.createCNode(Tag.Primary);
+                //node.addChild();
                 break;
             case UnaryExp_To_Not_Primary:
-                unaryExpNot((XObject) valueStack.peek());
-                break;
             case UnaryExp_To_Sub_Primary:
-                unaryExpSub((XObject) valueStack.peek());
+                node = CNodeFactroy.createCNode(Tag.UnaryExp);
+                node.addChild((CNode)valueStack.peek());
                 break;
             case MultiplicativeExp_To_MultiplicativeExp_Mul_UnaryExp:
             case MultiplicativeExp_To_MultiplicativeExp_Div_UnaryExp:
@@ -69,18 +78,87 @@ public class TreeBuilder{
             case EqualityExp_To_EqualityExp_NE_RelationExp:
             case ConditionAndExp_To_ConditionAndExp_And_EqualityExp:
             case ConditionOrExp_To_ConditionOrExp_Or_ConditionAndExp:
-                XObject a = (XObject)valueStack.get(valueStack.size() - 3);
-                XObject b = (XObject)valueStack.get(valueStack.size() - 1);
-                Token op = (Token)valueStack.get(valueStack.size()-2);
-                xObject = binaryExp(a, b, op);
+                node = CNodeFactroy.createCNode(Tag.NoAssignExp);
+                node.addChild((CNode)valueStack.get(valueStack.size()-3));
+                node.addChild((CNode)valueStack.get(valueStack.size()-1));
+                break;
+            case AssignableValue_To_Identifier:
+                node = CNodeFactroy.createCNode(Tag.Identifier);
+                node.setIdentifier((Word)valueStack.peek());
+                break;
+            case AssignableValue_To_Variable_Dot_AssignableValue:
+                node = CNodeFactroy.createCNode(Tag.AssignableValue);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 3));
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                break;
+            case AssignableValue_To_Variable_LSquare_Num_RSquare:
+                // when processing an assignment, will start from right CNode
+                node = CNodeFactroy.createCNode(Tag.AssignableValue);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 4));
+                temp = CNodeFactroy.createCNode(Tag.Num);
+                temp.setObject(new XNumObject((Num)valueStack.get(valueStack.size() - 2)));
+                node.addChild(temp);
+                break;
+            case AssignableValue_To_Variable_LSquare_String_RSquare:
+                node = CNodeFactroy.createCNode(Tag.AssignableValue);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 4));
+                temp = CNodeFactroy.createCNode(Tag.String);
+                temp.setObject(new XStringObject((String) valueStack.get(valueStack.size() - 2)));
+                node.addChild(temp);
+                break;
+            case AssignableValue_To_Variable_LSquare_Variable_RSquare:
+            case AssignableValue_To_Variable_LSquare_NoAssignExp_RSquare:
+                node = CNodeFactroy.createCNode(Tag.AssignableValue);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 4));
+                node.addChild((CNode)valueStack.get(valueStack.size() - 2));
+                break;
+            case Variable_To_AssignableValue:
+            case Variable_To_FuncInvocation:
+                collapse = true;
+                node = (CNode) valueStack.peek();
+                break;
+            case Variable_To_Variable_Dot_FuncInvocation:
+                node = CNodeFactroy.createCNode(Tag.Variable);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 3));
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                break;
+            case Variable_To_Self:
+//                node = CNodeFactroy.createCNode(Tag.Variable);
+                node = CNodeFactroy.createCNode(Tag.Self);
+                break;
+            case FuncInvocation_To_Identifier_LBracket_Args_RBracket:
+                node = CNodeFactroy.createCNode(Tag.FuncInvocation);
+                node.setIdentifier((Word)valueStack.get(valueStack.size() - 4));
+                node.addChild((CNode)valueStack.get(valueStack.size() - 2));
+                break;
+            case FuncInvocation_To_Identifier_LBracket_RBracket:
+                node = CNodeFactroy.createCNode(Tag.FuncInvocation);
+                node.setIdentifier((Word)valueStack.get(valueStack.size() - 3));
+                break;
+            case LeftSide_To_AssignableValue:
+            case LeftSide_To_ListAndTuple:
+                collapse = true;
+                node = (CNode) valueStack.peek();
+                break;
+            case MultiAssignment_To_AssignableValue_Assign_Dictionary:
+            case MultiAssignment_To_AssignableValue_Assign_ListAndTuple:
+            case MultiAssignment_To_ListAndTuple_Assign_ListAndTuple:
+                node = CNodeFactroy.createCNode(Tag.MultiAssignment);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 3));
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
                 break;
             case Assignment_To_LeftSide_Assign_AssignmentExp:
-
-
+                node = CNodeFactroy.createCNode(Tag.Assignment);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 3));
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+            case Assignment_To_MultiAssignment:
+                collapse = true;
+                node = (CNode) valueStack.peek();
+                break;
 
         }
 
-        if (node != null) {
+        if (node != null && !collapse) {
             node.production = n;
         }
         return node;

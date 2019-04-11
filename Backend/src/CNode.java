@@ -1,19 +1,25 @@
 import java.util.ArrayList;
 import java.util.Collections;
 
-// 常量折叠 单对单文法收缩
+// 常量折叠 单对单文法收缩(会丢失信息)
 public class CNode {
     public Tag tag;
     public CNode parent;
     public ArrayList<CNode> children;
     public GrammarEnum production;
 
-    public String getName() {
-        return name;
+    public String getIdentifier() {
+        return identifier;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+
+    public void setIdentifier(Word word) {
+        if (word.tag == Tag.Identifier) {
+            this.identifier = word.toString();
+        }
     }
 
     public XObject getObject() {
@@ -32,8 +38,8 @@ public class CNode {
         isChildrenReverse = childrenReverse;
     }
 
-    // if tag is IDENTIFIER, set name
-    private String name;
+    // if tag is IDENTIFIER, set identifier
+    private String identifier;
     private XObject object;
     private boolean isChildrenReverse = false;
 
