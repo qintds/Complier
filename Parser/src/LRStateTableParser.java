@@ -15,6 +15,7 @@ public class LRStateTableParser {
     // Executor
     private Executor executor;
     private int execMode = 0;
+    private TreeBuilder treeBuilder;
 
     private HashMap<Integer, HashMap<Tag, Integer>> lrStateTable;
 
@@ -22,11 +23,7 @@ public class LRStateTableParser {
     private Token inputToken;
 
     private void initExecutor() {
-        if (executor != null) return;
-        if (execMode == 0)
-            executor = new TreeBuilder(valueStack);
-        else if (execMode == 1)
-            executor = new CodeGenerator();
+        treeBuilder = new TreeBuilder(valueStack);
     }
 
     public LRStateTableParser(CodeFile parseFile) {
@@ -86,7 +83,7 @@ public class LRStateTableParser {
                 // reduce
                 int reduceProductionNum = - action;
                 Production production = ProductionManager.getInstance().getProductionByIndex(reduceProductionNum);
-                XObject reduceResult = doReduce(reduceProductionNum);
+                CNode reduceResult = doReduce(reduceProductionNum);
 
                 // pop the length of the production
                 int rightSize = production.right.size();
@@ -129,7 +126,7 @@ public class LRStateTableParser {
             envLevel--;
     }
 
-    private XObject doReduce(int productionNum) {
-        return executor.reduceAction(productionNum);
+    private CNode doReduce(int productionNum) {
+        return treeBuilder.reduceAction(productionNum);
     }
 }

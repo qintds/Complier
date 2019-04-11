@@ -8,30 +8,59 @@ ExtDef -> ImportDeclaration
 ImportDeclaration -> IMPORT PackageChain
 PackageChain -> IDENTIFIER | PackageChain . IDENTIFIER
 
-ClassDeclaration -> CLASS IDENTIFIER SuperOpt ClassBody
-SuperOpt -> : Super | ε
+-- ClassDeclaration -> CLASS IDENTIFIER SuperOpt ClassBody
+/**
+ClassDeclaration -> CLASS IDENTIFIER : Super ClassBody
+ClassDeclaration -> CLASS IDENTIFIER ClassBody
+**/
+-- SuperOpt -> : Super | ε
 Super -> Super , PackageChain | PackageChain
 ClassBody -> { ClassBodyDeclarations }
 ClassBodyDeclarations -> ClassBodyDeclaration
                        | ClassBodyDeclarations ClassBodyDeclaration
 ClassBodyDeclaration -> ClassMemberDeclaration
                        | FuncDeclaration
-ClassMemberDeclaration -> Assignment | ε
-FuncDeclaration -> FUNC IDENTIFIER ( ParamListOpt ) CompSt
-                 | FUNC IDENTIFIER ( ParamListOpt )
-ParamListOpt -> ParamList | ε
-ParamList -> IDENTIFIER DefaultValue | ParamList , IDENTIFIER DefaultValue
-DefaultValue -> = Primary | ε
+/**
+ClassMemberDeclaration -> Assignment
+**/
+--FuncDeclaration -> FUNC IDENTIFIER ( ParamListOpt ) CompSt
+--                 | FUNC IDENTIFIER ( ParamListOpt )
+-- ParamListOpt -> ParamList | ε
 
-Dictionary -> { MapListOpt }
-MapListOpt -> MapList | ε
+/**
+FuncDeclaration -> FUNC IDENTIFIER ( ParamList ) CompSt
+FuncDeclaration -> FUNC IDENTIFIER ( ) CompSt
+**/
+ParamList -> IDENTIFIER DefaultValue | ParamList , IDENTIFIER DefaultValue
+/**
+ParamList -> IDENTIFIER | ParamList , IDENTIFIER
+**/
+DefaultValue -> = Primary
+
+--Dictionary -> { MapListOpt }
+--MapListOpt -> MapList | ε
+/**
+Dictionary -> { MapList }
+Dictionary -> { }
+**/
 MapList -> MapList , Map | Map
 Map -> Primary : Item
-List -> [ ItemListOpt ]
-ItemListOpt -> ItemList | ε
+--List -> [ ItemListOpt ]
+--ItemListOpt -> ItemList | ε
+/**
+List -> [ ItemList ]
+List -> [  ]
+**/
+
 ItemList -> ItemList , Item | Item
-TupleStart ->  Item , Item  TupleFollowOpt
-TupleFollowOpt -> TupleFollow | ε
+--TupleStart ->  Item , Item  TupleFollowOpt
+--TupleFollowOpt -> TupleFollow | ε
+
+/**
+TupleStart ->  Item , Item  TupleFollow
+TupleStart ->  Item , Item
+**/
+
 TupleFollow -> TupleFollow , Item | Item
 Item -> Primary | Dictionary | List | Tuple
 
@@ -40,8 +69,13 @@ TupleNoBracket -> TupleStart
 
 ListAndTuple -> List | Tuple | TupleNoBracket
 
-CompSt -> { StmtListOpt }
-StmtListOpt -> StmtList | ε
+--CompSt -> { StmtListOpt }
+--StmtListOpt -> StmtList | ε
+
+/**
+CompSt -> { StmtList }
+CompSt -> {  }
+**/
 StmtList -> StmtList Stmt | Stmt
 Stmt -> Exp
       | MultiAssignment

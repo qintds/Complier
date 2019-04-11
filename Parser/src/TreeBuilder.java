@@ -1,6 +1,3 @@
-import org.omg.CORBA.NO_IMPLEMENT;
-import sun.security.pkcs11.wrapper.CK_NOTIFY;
-
 import java.util.Stack;
 
 public class TreeBuilder{
@@ -151,10 +148,33 @@ public class TreeBuilder{
                 node = CNodeFactroy.createCNode(Tag.Assignment);
                 node.addChild((CNode)valueStack.get(valueStack.size() - 3));
                 node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                break;
             case Assignment_To_MultiAssignment:
+            case Exp_To_AssignmentExp:
+            case Args_To_Exp:
                 collapse = true;
                 node = (CNode) valueStack.peek();
                 break;
+            case Args_To_Args_Comma_Exp:
+                node = CNodeFactroy.createCNode(Tag.Args);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 3));
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                break;
+            case Item_To_Dictionary:
+            case Item_To_List:
+            case Item_To_Tuple:
+            case Item_To_Primary:
+            case ItemList_To_Item:
+                collapse = true;
+                node = (CNode) valueStack.peek();
+                break;
+            case ItemList_To_ItemList_Comma_Item:
+                node = CNodeFactroy.createCNode(Tag.ItemList);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 3));
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                break;
+
+
 
         }
 

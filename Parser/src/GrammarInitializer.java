@@ -51,11 +51,11 @@ public class GrammarInitializer {
         generateProduction(Tag.PackageChain, new Tag[]{Tag.PackageChain, Tag.Dot, Tag.Identifier}, false);
         generateProduction(Tag.PackageChain, new Tag[]{Tag.Identifier}, false);
 
+        //ClassDeclaration -> CLASS IDENTIFIER : Super ClassBody
+        //ClassDeclaration -> CLASS IDENTIFIER ClassBody
+        generateProduction(Tag.ClassDeclaration, new Tag[]{Tag.Class, Tag.Identifier, Tag.Colon, Tag.Super, Tag.ClassBody}, false);
+        generateProduction(Tag.ClassDeclaration, new Tag[]{Tag.Class, Tag.Identifier, Tag.ClassBody}, false);
 
-//        ClassDeclaration -> CLASS IDENTIFIER SuperOpt ClassBody
-        generateProduction(Tag.ClassDeclaration, new Tag[]{Tag.Class, Tag.Identifier, Tag.SuperOpt, Tag.ClassBody}, false);
-//        SuperOpt -> : Super | ε
-        generateProduction(Tag.SuperOpt, new Tag[]{Tag.Colon, Tag.Super}, true);
 
 //        Super -> Super , PackageChain | PackageChain
         generateProduction(Tag.Super, new Tag[]{Tag.Super, Tag.Comma, Tag.PackageChain}, false);
@@ -74,47 +74,48 @@ public class GrammarInitializer {
         generateProduction(Tag.ClassBodyDeclaration, new Tag[]{Tag.ClassMemberDeclaration}, false);
         generateProduction(Tag.ClassBodyDeclaration, new Tag[]{Tag.FuncDeclaration}, false);
 
-//        ClassMemberDeclaration -> Assignment | ε
-        generateProduction(Tag.ClassMemberDeclaration, new Tag[]{Tag.Assignment}, true);
+//        ClassMemberDeclaration -> Assignment
+        generateProduction(Tag.ClassMemberDeclaration, new Tag[]{Tag.Assignment}, false);
 
-
-//        FuncDeclaration -> FUNC IDENTIFIER ( ParamListOpt ) CompSt
-//                | FUNC IDENTIFIER ( ParamListOpt )
-        generateProduction(Tag.FuncDeclaration, new Tag[]{Tag.Func, Tag.Identifier, Tag.LBracket, Tag.ParamListOpt, Tag.RBracket, Tag.CompSt}, false);
-        generateProduction(Tag.FuncDeclaration, new Tag[]{Tag.Func, Tag.Identifier, Tag.LBracket, Tag.ParamListOpt, Tag.RBracket}, false);
-
-//        ParamListOpt -> ParamList | ε
-        generateProduction(Tag.ParamListOpt, new Tag[]{Tag.ParamList}, true);
+        //FuncDeclaration -> FUNC IDENTIFIER ( ParamList ) CompSt
+        //FuncDeclaration -> FUNC IDENTIFIER ( ) CompSt
+        generateProduction(Tag.FuncDeclaration, new Tag[]{Tag.Func, Tag.Identifier, Tag.LBracket, Tag.ParamList, Tag.RBracket, Tag.CompSt}, false);
+        generateProduction(Tag.FuncDeclaration, new Tag[]{Tag.Func, Tag.Identifier, Tag.LBracket, Tag.RBracket, Tag.CompSt}, false);
 
 //        ParamList -> IDENTIFIER DefaultValue | ParamList , IDENTIFIER DefaultValue
         generateProduction(Tag.ParamList, new Tag[]{Tag.Identifier, Tag.DefaultValue}, false);
         generateProduction(Tag.ParamList, new Tag[]{Tag.ParamList, Tag.Comma, Tag.Identifier, Tag.DefaultValue}, false);
+        //ParamList -> IDENTIFIER | ParamList , IDENTIFIER
+        generateProduction(Tag.ParamList, new Tag[]{Tag.Identifier}, false);
+        generateProduction(Tag.ParamList, new Tag[]{Tag.ParamList, Tag.Comma, Tag.Identifier}, false);
 
-//        DefaultValue -> = Primary | ε
-        generateProduction(Tag.DefaultValue, new Tag[]{Tag.Assign, Tag.Primary}, true);
+
+//        DefaultValue -> = Primary
+        generateProduction(Tag.DefaultValue, new Tag[]{Tag.Assign, Tag.Primary}, false);
 
 
         // Data Structure
-//        Dictionary -> { MapListOpt }
-        generateProduction(Tag.Dictionary, new Tag[]{Tag.LBrace, Tag.MapListOpt, Tag.RBrace}, false);
-//        MapListOpt -> MapList | ε
-        generateProduction(Tag.MapListOpt, new Tag[]{Tag.MapList}, true);
+        // Dictionary -> { MapList }
+        // Dictionary -> { }
+        generateProduction(Tag.Dictionary, new Tag[]{Tag.LBrace, Tag.MapList, Tag.RBrace}, false);
+        generateProduction(Tag.Dictionary, new Tag[]{Tag.LBrace, Tag.RBrace}, false);
 //        MapList -> MapList , Map | Map
         generateProduction(Tag.MapList, new Tag[]{Tag.MapList, Tag.Comma, Tag.Map}, false);
         generateProduction(Tag.MapList, new Tag[]{Tag.Map}, false);
 //        Map -> Primary : Item
         generateProduction(Tag.Map, new Tag[]{Tag.Primary, Tag.Colon, Tag.Item}, false);
-//        List -> [ ItemListOpt ]
-        generateProduction(Tag.List, new Tag[]{Tag.LSquare, Tag.ItemListOpt, Tag.RSquare}, false);
-//        ItemListOpt -> ItemList | ε
-        generateProduction(Tag.ItemListOpt, new Tag[]{Tag.ItemList}, true);
+        //List -> [ ItemList ]
+        //List -> [  ]
+        generateProduction(Tag.List, new Tag[]{Tag.LSquare, Tag.ItemList, Tag.RSquare}, false);
+        generateProduction(Tag.List, new Tag[]{Tag.LSquare, Tag.RSquare}, false);
 //        ItemList -> ItemList , Item | Item
         generateProduction(Tag.ItemList, new Tag[]{Tag.ItemList, Tag.Comma, Tag.Item}, false);
         generateProduction(Tag.ItemList, new Tag[]{Tag.Item}, false);
-//        TupleStart ->  Item , Item  TupleFollowOpt
-        generateProduction(Tag.TupleStart, new Tag[]{Tag.Item, Tag.Comma, Tag.Item, Tag.TupleFollowOpt}, false);
-//        TupleFollowOpt -> TupleFollow | ε
-        generateProduction(Tag.TupleFollowOpt, new Tag[]{Tag.TupleFollow}, true);
+
+        //TupleStart ->  Item , Item  TupleFollow
+        //TupleStart ->  Item , Item
+        generateProduction(Tag.TupleStart, new Tag[]{Tag.Item, Tag.Comma, Tag.Item, Tag.TupleFollow}, false);
+        generateProduction(Tag.TupleStart, new Tag[]{Tag.Item, Tag.Comma, Tag.Item}, false);
 //        TupleFollow -> TupleFollow , Item | Item
         generateProduction(Tag.TupleFollow, new Tag[]{Tag.TupleFollow, Tag.Comma, Tag.Item}, false);
         generateProduction(Tag.TupleFollow, new Tag[]{Tag.Item}, false);
@@ -133,10 +134,10 @@ public class GrammarInitializer {
         generateProduction(Tag.ListAndTuple, new Tag[]{Tag.TupleNoBracket}, false);
 
         // Statement
-//        CompSt -> { StmtListOpt }
-        generateProduction(Tag.CompSt, new Tag[]{Tag.LBrace, Tag.StmtListOpt, Tag.RBrace}, false);
-//        StmtListOpt -> StmtList | ε
-        generateProduction(Tag.StmtListOpt, new Tag[]{Tag.StmtList}, true);
+        ///CompSt -> { StmtList }
+        //CompSt -> {  }
+        generateProduction(Tag.CompSt, new Tag[]{Tag.LBrace, Tag.StmtList, Tag.RBrace}, false);
+        generateProduction(Tag.CompSt, new Tag[]{Tag.LBrace, Tag.RBrace}, false);
 //        StmtList -> StmtList Stmt | Stmt
         generateProduction(Tag.StmtList, new Tag[]{Tag.StmtList, Tag.Stmt}, false);
         generateProduction(Tag.StmtList, new Tag[]{Tag.Stmt}, false);
