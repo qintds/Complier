@@ -312,6 +312,11 @@ public class GrammarInitializer {
 //        Args -> Args , Exp | Exp
         generateProduction(Tag.Args, new Tag[]{Tag.Args, Tag.Comma, Tag.Exp}, false);
         generateProduction(Tag.Args, new Tag[]{Tag.Exp}, false);
+
+        // Stmt -> BREAK
+        //      | CONTINUE
+        generateProduction(Tag.Stmt, new Tag[]{Tag.Break}, false);
+        generateProduction(Tag.Stmt, new Tag[]{Tag.Continue}, false);
     }
 
     private void generateProduction(Tag left, Tag [] arr, boolean nullable) {

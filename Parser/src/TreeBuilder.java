@@ -173,7 +173,75 @@ public class TreeBuilder{
                 node.addChild((CNode)valueStack.get(valueStack.size() - 3));
                 node.addChild((CNode)valueStack.get(valueStack.size() - 1));
                 break;
-
+            case List_To_LSquare_ItemList_RSquare:
+                node = CNodeFactroy.createCNode(Tag.List);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 2));
+                break;
+            case List_To_LSquare_RSquare:
+                node = CNodeFactroy.createCNode(Tag.List);
+                break;
+            case Map_To_Primary_Colon_Item:
+                node = CNodeFactroy.createCNode(Tag.Map);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 3));
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                break;
+            case MapList_To_MapList_Comma_Map:
+                node = CNodeFactroy.createCNode(Tag.MapList);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 3));
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                break;
+            case MapList_To_Map:
+                collapse = true;
+                node = (CNode) valueStack.peek();
+                break;
+            case Dictionary_To_LBrace_MapList_RBrace:
+                node = CNodeFactroy.createCNode(Tag.Dictionary);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 2));
+                break;
+            case Dictionary_To_LBrace_RBrace:
+                node = CNodeFactroy.createCNode(Tag.Dictionary);
+                break;
+            case TupleStart_To_Item_Comma_Item:
+                node = CNodeFactroy.createCNode(Tag.TupleStart);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 3));
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                break;
+            case TupleStart_To_Item_Comma_Item_TupleFollow:
+                node = CNodeFactroy.createCNode(Tag.TupleStart);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 4));
+                node.addChild((CNode)valueStack.get(valueStack.size() - 2));
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                break;
+            case TupleFollow_To_TupleFollow_Comma_Item:
+                node = CNodeFactroy.createCNode(Tag.TupleFollow);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 3));
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                break;
+            case TupleFollow_To_Item:
+                collapse = true;
+                node = (CNode) valueStack.peek();
+                break;
+            case Tuple_To_LBracket_TupleStart_RBracket:
+                node = CNodeFactroy.createCNode(Tag.TupleFollow);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 2));
+                break;
+            case TupleNoBracket_To_TupleStart:
+                node = CNodeFactroy.createCNode(Tag.TupleFollow);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                break;
+            case ListAndTuple_To_List:
+            case ListAndTuple_To_Tuple:
+            case ListAndTuple_To_TupleNoBracket:
+                collapse = true;
+                node = (CNode) valueStack.peek();
+                break;
+            case Stmt_To_Break:
+                node = CNodeFactroy.createCNode(Tag.Break);
+                break;
+            case Stmt_To_Continue:
+                node = CNodeFactroy.createCNode(Tag.Continue);
+            case RepeatCond_To_NoAssignExp:
+                //to be continue
 
 
         }
