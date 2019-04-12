@@ -1,6 +1,3 @@
-import org.omg.CORBA.NO_IMPLEMENT;
-
-import java.util.HashMap;
 import java.util.Stack;
 
 public class TreeBuilder{
@@ -402,8 +399,17 @@ public class TreeBuilder{
                 node = CNodeFactroy.createCNode(Tag.Super);
                 node.addChild((CNode)valueStack.get(valueStack.size() - 3));
                 node.addChild((CNode)valueStack.get(valueStack.size() - 1));
-
-
+            case PackageChain_To_Identifier:
+                node = CNodeFactroy.createCNode(Tag.Identifier);
+                node.setIdentifier((Word)valueStack.get(valueStack.size() - 1));
+                break;
+            case PackageChain_To_PackageChain_Dot_Identifier:
+                node = CNodeFactroy.createCNode(Tag.PackageChain);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 3));
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+            case ClassDeclaration_To_Class_Identifier_ClassBody:
+            case ClassDeclaration_To_Class_Identifier_Colon_Super_ClassBody:
+                // To be continue
 
 
 
@@ -423,7 +429,9 @@ public class TreeBuilder{
 
     private void generateFunctionEntrance(Word word, CNode funcBody) {
         XFuncObject newFunc = new XFuncObject(word, funcBody);
-        //add it into the env
+        // add it into the env
+        // put to the stack
+        // function in extDef and Class will be put in respective env
     }
 
     private void generateClassEntrance(Word word, CNode funcBody) {
