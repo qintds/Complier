@@ -1,3 +1,6 @@
+import org.omg.CORBA.NO_IMPLEMENT;
+
+import java.util.HashMap;
 import java.util.Stack;
 
 public class TreeBuilder{
@@ -240,8 +243,174 @@ public class TreeBuilder{
                 break;
             case Stmt_To_Continue:
                 node = CNodeFactroy.createCNode(Tag.Continue);
+                break;
+            case RepeatParam_To_Identifier:
+                node = CNodeFactroy.createCNode(Tag.Identifier);
+                node.setIdentifier((Word)valueStack.get(valueStack.size() - 1));
+                break;
+            case IterateValue_To_List:
+            case IterateValue_To_Tuple:
+            case IterateValue_To_Variable:
+                collapse = true;
+                node = (CNode) valueStack.peek();
+                break;
+            case RepeatParam_To_RepeatParam_Comma_Identifier:
+                node = CNodeFactroy.createCNode(Tag.RepeatParam);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 3));
+                temp = CNodeFactroy.createCNode(Tag.Identifier);
+                temp.setIdentifier((Word)valueStack.get(valueStack.size() - 1));
+                node.addChild(temp);
+                break;
             case RepeatCond_To_NoAssignExp:
-                //to be continue
+                node = CNodeFactroy.createCNode(Tag.RepeatCond);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                break;
+            case RepeatCond_To_RepeatParam_In_IterateValue:
+                node = CNodeFactroy.createCNode(Tag.RepeatCond);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 3));
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                break;
+            case RepeatStmt_To_Repeat_RepeatCond_CompSt:
+                node = CNodeFactroy.createCNode(Tag.RepeatStmt);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 2));
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                break;
+            case IfStmt_To_If_NoAssignExp_CompSt:
+                node = CNodeFactroy.createCNode(Tag.IfStmt);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 2));
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                break;
+            case ElifStmt_To_ElifStmt_Elif_NoAssignExp_CompSt:
+                node = CNodeFactroy.createCNode(Tag.ElifStmt);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 4));
+                node.addChild((CNode)valueStack.get(valueStack.size() - 2));
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                break;
+            case ElifStmt_To_IfStmt:
+            case IfElseStmt_To_ElifStmt:
+                collapse = true;
+                node = (CNode) valueStack.peek();
+                break;
+            case IfElseStmt_To_IfElseStmt_Else_CompSt:
+                node = CNodeFactroy.createCNode(Tag.IfElseStmt);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 3));
+                node.addChild((CNode)valueStack.get(valueStack.size() - 2));
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                break;
+            case ReturnParam_To_Dictionary:
+            case ReturnParam_To_ListAndTuple:
+            case ReturnParam_To_NoAssignExp:
+                collapse = true;
+                node = (CNode) valueStack.peek();
+                break;
+            case ReturnStmt_To_Return_RepeatParam:
+                node = CNodeFactroy.createCNode(Tag.ReturnStmt);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                break;
+            case Stmt_To_CompSt:
+            case Stmt_To_Exp:
+            case Stmt_To_IfElseStmt:
+            case Stmt_To_MultiAssignment:
+            case Stmt_To_RepeatStmt:
+            case Stmt_To_ReturnStmt:
+            case StmtList_To_Stmt:
+                collapse = true;
+                node = (CNode) valueStack.peek();
+                break;
+            case StmtList_To_StmtList_Stmt:
+                node = CNodeFactroy.createCNode(Tag.StmtList);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 2));
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                 break;
+            case CompSt_To_LBrace_RBrace:
+                node = CNodeFactroy.createCNode(Tag.CompSt);
+                break;
+            case CompSt_To_LBrace_StmtList_RBrace:
+                node = CNodeFactroy.createCNode(Tag.CompSt);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 2));
+                break;
+                //function part, need record function
+            case DefaultValue_To_Assign_Primary:
+                node = CNodeFactroy.createCNode(Tag.DefaultValue);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                break;
+            case ParamList_To_Identifier:
+                node = CNodeFactroy.createCNode(Tag.Identifier);
+                node.setIdentifier((Word)valueStack.get(valueStack.size() - 1));
+                break;
+            case ParamList_To_Identifier_DefaultValue:
+                node = CNodeFactroy.createCNode(Tag.ParamList);
+                temp = CNodeFactroy.createCNode(Tag.Identifier);
+                temp.setIdentifier((Word)valueStack.get(valueStack.size() - 2));
+                node.addChild(temp);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                break;
+            case ParamList_To_ParamList_Comma_Identifier:
+                node = CNodeFactroy.createCNode(Tag.ParamList);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 3));
+                temp = CNodeFactroy.createCNode(Tag.Identifier);
+                temp.setIdentifier((Word)valueStack.get(valueStack.size() - 1));
+                node.addChild(temp);
+                break;
+            case ParamList_To_ParamList_Comma_Identifier_DefaultValue:
+                node = CNodeFactroy.createCNode(Tag.ParamList);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 4));
+                temp = CNodeFactroy.createCNode(Tag.Identifier);
+                temp.setIdentifier((Word)valueStack.get(valueStack.size() - 2));
+                node.addChild(temp);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                break;
+            case FuncDeclaration_To_Func_Identifier_LBracket_RBracket_CompSt:
+                node = CNodeFactroy.createCNode(Tag.FuncDeclaration);
+                temp = CNodeFactroy.createCNode(Tag.Identifier);
+                temp.setIdentifier((Word)valueStack.get(valueStack.size() - 4));
+                node.addChild(temp);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                //record the entrance of the function
+                generateFunctionEntrance((Word)valueStack.get(valueStack.size() - 4), node);
+                break;
+            case FuncDeclaration_To_Func_Identifier_LBracket_ParamList_RBracket_CompSt:
+                node = CNodeFactroy.createCNode(Tag.FuncDeclaration);
+                temp = CNodeFactroy.createCNode(Tag.Identifier);
+                temp.setIdentifier((Word)valueStack.get(valueStack.size() - 5));
+                node.addChild(temp);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 3));
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                //record the entrance of the function
+                generateFunctionEntrance((Word)valueStack.get(valueStack.size() - 5), node);
+                break;
+            case ClassMemberDeclaration_To_Assignment:
+                node = CNodeFactroy.createCNode(Tag.ClassMemberDeclaration);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                break;
+            case ClassBodyDeclaration_To_ClassMemberDeclaration:
+            case ClassBodyDeclaration_To_FuncDeclaration:
+            case ClassBodyDeclarations_To_ClassBodyDeclaration:
+            case Super_To_PackageChain:
+                collapse = true;
+                node = (CNode) valueStack.peek();
+                break;
+            case ClassBodyDeclarations_To_ClassBodyDeclarations_ClassBodyDeclaration:
+                node = CNodeFactroy.createCNode(Tag.ClassBodyDeclarations);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 2));
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                break;
+            case ClassBody_To_LBrace_ClassBodyDeclarations_RBrace:
+                node = CNodeFactroy.createCNode(Tag.ClassBody);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 2));
+            case Super_To_Super_Comma_PackageChain:
+                node = CNodeFactroy.createCNode(Tag.Super);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 3));
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+
+
+
+
+
+
+
+
+
 
 
         }
@@ -250,6 +419,15 @@ public class TreeBuilder{
             node.production = n;
         }
         return node;
+    }
+
+    private void generateFunctionEntrance(Word word, CNode funcBody) {
+        XFuncObject newFunc = new XFuncObject(word, funcBody);
+        //add it into the env
+    }
+
+    private void generateClassEntrance(Word word, CNode funcBody) {
+
     }
 
 
