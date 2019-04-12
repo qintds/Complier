@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/Backend/Backend.iml" filepath="$PROJECT_DIR$/Backend/Backend.iml" />
       <module fileurl="file://$PROJECT_DIR$/Complier.iml" filepath="$PROJECT_DIR$/Complier.iml" />
       <module fileurl="file://$PROJECT_DIR$/ErrorHandler/ErrorHandler.iml" filepath="$PROJECT_DIR$/ErrorHandler/ErrorHandler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Executor/Executor.iml" filepath="$PROJECT_DIR$/Executor/Executor.iml" />
       <module fileurl="file://$PROJECT_DIR$/InputSystem/InputSystem.iml" filepath="$PROJECT_DIR$/InputSystem/InputSystem.iml" />
       <module fileurl="file://$PROJECT_DIR$/LLVM/LLVM.iml" filepath="$PROJECT_DIR$/LLVM/LLVM.iml" />
       <module fileurl="file://$PROJECT_DIR$/Lexer/Lexer.iml" filepath="$PROJECT_DIR$/Lexer/Lexer.iml" />

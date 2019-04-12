@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Stack;
 
 public class TreeBuilder{
@@ -5,7 +7,12 @@ public class TreeBuilder{
     private Stack<Object> valueStack;
     private XEnv environment;
     private String address = "";
-    private Stack<CNode> nodeStack =new Stack<>();
+    private Stack<XFuncObject> funcStack = new Stack<>();
+    private ArrayList<String> funcAndClassName = new ArrayList<>();
+    private HashMap<String, XFuncObject> functionMap = new HashMap<>();
+    private HashMap<String, XClassObject> classMap = new HashMap<>();
+    private CNode program;
+
 
     public TreeBuilder(Stack<Object> valueStack){
         this.valueStack = valueStack;
@@ -364,7 +371,7 @@ public class TreeBuilder{
                 node.addChild(temp);
                 node.addChild((CNode)valueStack.get(valueStack.size() - 1));
                 //record the entrance of the function
-                generateFunctionEntrance((Word)valueStack.get(valueStack.size() - 4), node);
+                generateFunctionEntrance((Word)valueStack.get(valueStack.size() - 4), node, false);
                 break;
             case FuncDeclaration_To_Func_Identifier_LBracket_ParamList_RBracket_CompSt:
                 node = CNodeFactroy.createCNode(Tag.FuncDeclaration);
@@ -374,7 +381,7 @@ public class TreeBuilder{
                 node.addChild((CNode)valueStack.get(valueStack.size() - 3));
                 node.addChild((CNode)valueStack.get(valueStack.size() - 1));
                 //record the entrance of the function
-                generateFunctionEntrance((Word)valueStack.get(valueStack.size() - 5), node);
+                generateFunctionEntrance((Word)valueStack.get(valueStack.size() - 5), node, true);
                 break;
             case ClassMemberDeclaration_To_Assignment:
                 node = CNodeFactroy.createCNode(Tag.ClassMemberDeclaration);
@@ -395,10 +402,12 @@ public class TreeBuilder{
             case ClassBody_To_LBrace_ClassBodyDeclarations_RBrace:
                 node = CNodeFactroy.createCNode(Tag.ClassBody);
                 node.addChild((CNode)valueStack.get(valueStack.size() - 2));
+                break;
             case Super_To_Super_Comma_PackageChain:
                 node = CNodeFactroy.createCNode(Tag.Super);
                 node.addChild((CNode)valueStack.get(valueStack.size() - 3));
                 node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                break;
             case PackageChain_To_Identifier:
                 node = CNodeFactroy.createCNode(Tag.Identifier);
                 node.setIdentifier((Word)valueStack.get(valueStack.size() - 1));
@@ -407,18 +416,53 @@ public class TreeBuilder{
                 node = CNodeFactroy.createCNode(Tag.PackageChain);
                 node.addChild((CNode)valueStack.get(valueStack.size() - 3));
                 node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                break;
             case ClassDeclaration_To_Class_Identifier_ClassBody:
+                node = CNodeFactroy.createCNode(Tag.ClassBodyDeclaration);
+                temp = CNodeFactroy.createCNode(Tag.Identifier);
+                temp.setIdentifier((Word)valueStack.get(valueStack.size() - 2));
+                node.addChild(temp);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                generateClassEntrance((Word)valueStack.get(valueStack.size() - 2), node, false);
+                break;
             case ClassDeclaration_To_Class_Identifier_Colon_Super_ClassBody:
-                // To be continue
-
-
-
-
-
-
-
-
-
+                node = CNodeFactroy.createCNode(Tag.ClassBodyDeclaration);
+                temp = CNodeFactroy.createCNode(Tag.Identifier);
+                temp.setIdentifier((Word)valueStack.get(valueStack.size() - 4));
+                node.addChild(temp);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 2));
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                generateClassEntrance((Word)valueStack.get(valueStack.size() - 4), node, true);
+                break;
+            case ImportDeclaration_To_Import_PackageChain:
+                node = CNodeFactroy.createCNode(Tag.ImportDeclaration);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                break;
+            case ExtDef_To_ClassDeclaration:
+            case ExtDef_To_ImportDeclaration:
+            case ExtDef_To_StmtList:
+                collapse = true;
+                node = (CNode) valueStack.peek();
+                break;
+            case ExtDef_To_FuncDeclaration:
+                collapse = true;
+                node = (CNode) valueStack.peek();
+                recordNormalFunction();
+                break;
+            case ExtDefList_To_ExtDef:
+                node = CNodeFactroy.createCNode(Tag.ExtDefList);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+            case ExtDefList_To_ExtDefList_ExtDef:
+                node = CNodeFactroy.createCNode(Tag.ExtDefList);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 2));
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                break;
+            case Program_To_ExtDefList:
+                node = CNodeFactroy.createCNode(Tag.Program);
+                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                program = node;
+                System.out.println("built tree");
+                break;
         }
 
         if (node != null && !collapse) {
@@ -427,16 +471,43 @@ public class TreeBuilder{
         return node;
     }
 
-    private void generateFunctionEntrance(Word word, CNode funcBody) {
+    private void generateFunctionEntrance(Word word, CNode funcBody, boolean hasParams) {
         XFuncObject newFunc = new XFuncObject(word, funcBody);
+        newFunc.setContainParams(hasParams);
+        funcStack.push(newFunc);
         // add it into the env
         // put to the stack
         // function in extDef and Class will be put in respective env
     }
 
-    private void generateClassEntrance(Word word, CNode funcBody) {
+    private void recordNormalFunction() {
+        if (funcStack.size() == 1) {
+            XFuncObject temp = funcStack.pop();
+            if (!funcAndClassName.contains(temp.getFuncName())) {
+                functionMap.put(temp.getFuncName(), temp);
+            } else {
+                // repeat name
+            }
 
+        } else {
+            //error
+        }
     }
+
+    private void generateClassEntrance(Word word, CNode funcBody, boolean isInherit) {
+        XClassObject newClass = new XClassObject(word, funcBody);
+        newClass.setInherit(isInherit);
+        if (funcStack.size()>0) {
+            for (int i = funcStack.size(); i > 0; i--) {
+                XFuncObject temp = funcStack.get(funcStack.size() - i);
+                newClass.addClassFunction(temp.getFuncName(), temp);
+            }
+            funcStack.clear();
+        }
+        classMap.put(newClass.getClassName(), newClass);
+    }
+
+
 
 
     private XObject unaryExpNot(XObject x) {

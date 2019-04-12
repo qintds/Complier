@@ -27,4 +27,20 @@ public class XFuncObject extends XObject {
     public void genCode() {
 
     }
+
+    public HashMap<String, XObject> getParams() {
+        return params;
+    }
+
+    public CNode getFuncBody() {
+        return funcBody;
+    }
+
+    public String getFuncName() {
+        return funcName;
+    }
+
+    public boolean isContainParams() {
+        return containParams;
+    }
 }

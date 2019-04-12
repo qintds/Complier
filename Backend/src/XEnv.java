@@ -27,4 +27,16 @@ public class XEnv {
         variableMap.put(identifier, obj);
     }
 
+    public void setFunction(String identifier, XFuncObject funcObject) {
+        functionMap.put(identifier, funcObject);
+    }
+
+    public boolean hasFunctionDefine(String identifier) {
+        return functionMap.containsKey(identifier);
+    }
+
+    public void setParent(XEnv env) {
+        parent = env;
+    }
+
 }
