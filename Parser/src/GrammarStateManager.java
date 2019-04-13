@@ -11,7 +11,7 @@ public class GrammarStateManager {
     // grammarStateID, inputTag, action:shift to next grammarState/reduce by a production
     public HashMap<Integer, HashMap<Tag, Integer>> lrStateTable = new HashMap<>();
     // compress or not
-    private boolean isCompressed = true;
+    private boolean isCompressed = false;
 
     private GrammarStateManager(){}
 

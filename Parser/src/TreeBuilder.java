@@ -298,7 +298,6 @@ public class TreeBuilder{
             case IfElseStmt_To_IfElseStmt_Else_CompSt:
                 node = CNodeFactroy.createCNode(Tag.IfElseStmt);
                 node.addChild((CNode)valueStack.get(valueStack.size() - 3));
-                node.addChild((CNode)valueStack.get(valueStack.size() - 2));
                 node.addChild((CNode)valueStack.get(valueStack.size() - 1));
                 break;
             case ReturnParam_To_Dictionary:
@@ -310,6 +309,9 @@ public class TreeBuilder{
             case ReturnStmt_To_Return_RepeatParam:
                 node = CNodeFactroy.createCNode(Tag.ReturnStmt);
                 node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                break;
+            case ReturnStmt_To_Return:
+                node = CNodeFactroy.createCNode(Tag.ReturnStmt);
                 break;
             case Stmt_To_CompSt:
             case Stmt_To_Exp:
@@ -415,7 +417,9 @@ public class TreeBuilder{
             case PackageChain_To_PackageChain_Dot_Identifier:
                 node = CNodeFactroy.createCNode(Tag.PackageChain);
                 node.addChild((CNode)valueStack.get(valueStack.size() - 3));
-                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
+                temp = CNodeFactroy.createCNode(Tag.Identifier);
+                temp.setIdentifier((Word)valueStack.get(valueStack.size() - 1));
+                node.addChild(temp);
                 break;
             case ClassDeclaration_To_Class_Identifier_ClassBody:
                 node = CNodeFactroy.createCNode(Tag.ClassBodyDeclaration);

@@ -154,8 +154,9 @@ public class GrammarInitializer {
         generateProduction(Tag.Stmt, new Tag[]{Tag.IfElseStmt}, false);
         generateProduction(Tag.Stmt, new Tag[]{Tag.RepeatStmt}, false);
 
-//        ReturnStmt -> RETURN ReturnParam
+//        ReturnStmt -> RETURN ReturnParam | RETURN
         generateProduction(Tag.ReturnStmt, new Tag[]{Tag.Return, Tag.RepeatParam}, false);
+        generateProduction(Tag.ReturnStmt, new Tag[]{Tag.Return}, false);
 //        ReturnParam -> NoAssignExp | ListAndTuple | Dictionary
         generateProduction(Tag.ReturnParam, new Tag[]{Tag.NoAssignExp}, false);
         generateProduction(Tag.ReturnParam, new Tag[]{Tag.ListAndTuple}, false);

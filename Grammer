@@ -53,7 +53,7 @@ Stmt -> Exp
       | ReturnStmt
       | IfElseStmt
       | RepeatStmt
-ReturnStmt -> RETURN ReturnParam
+ReturnStmt -> RETURN ReturnParam | RETURN
 ReturnParam -> NoAssignExp | ListAndTuple | Dictionary
 
 IfStmt -> IF NoAssignExp CompSt

@@ -1,12 +1,5 @@
 import java.util.ArrayList;
 
-class good {
-}
-
-class goodd extends good{
-
-}
-
 public class LexerTest {
     public static void main(String[] args) {
         LexerTest inner = new LexerTest();
@@ -21,9 +14,6 @@ public class LexerTest {
 ////        Lexer lex = new Lexer("codeFile");
 ////        lex.run();
 ////        printCF(lex.presentFile);
-        ArrayList<good> abc = new ArrayList<>();
-        goodd cc = new goodd();
-        abc.add(cc);
 
     }
 
