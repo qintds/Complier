@@ -58,6 +58,7 @@ public enum Tag {
         MulEQ, // *=
         DivEQ, // /=
         ModEQ, // %=
+        LF, // line wrap
 
         Comment, // //
 

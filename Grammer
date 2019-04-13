@@ -47,12 +47,12 @@ ListAndTuple -> List | Tuple | TupleNoBracket
 CompSt -> { StmtList }
 CompSt -> {  }
 StmtList -> StmtList Stmt | Stmt
-Stmt -> Exp
-      | MultiAssignment
-      | CompSt
-      | ReturnStmt
-      | IfElseStmt
-      | RepeatStmt
+Stmt -> Exp ENTER
+      | MultiAssignment ENTER
+      | CompSt ENTER
+      | ReturnStmt ENTER
+      | IfElseStmt ENTER
+      | RepeatStmt ENTER
 ReturnStmt -> RETURN ReturnParam | RETURN
 ReturnParam -> NoAssignExp | ListAndTuple | Dictionary
 

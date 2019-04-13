@@ -49,6 +49,11 @@ public class LRStateTableParser {
             Integer action = getAction(statusStack.peek(), inputTag);
 
             if (action == null) {
+                if (inputTag == Tag.LF) {
+                    inputToken = nextToken();
+                    inputTag = inputToken.tag;
+                    continue;
+                }
                 // error
                 System.out.println("something wrong");
                 return;

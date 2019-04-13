@@ -38,6 +38,7 @@ public class Lexer {
     private void addLine() {
         if (presentLine.totalTokenCount > 0){
             presentLine.trueLineNum = line;
+            presentLine.append(new Token(Tag.LF));
             presentFile.append(presentLine);
             presentLine = new CodeLine();
         }
@@ -96,8 +97,9 @@ public class Lexer {
         for( ; ; readch()) {
             if (peek == ' ' || peek == '\t')
                 continue;
-            else if (peek == '\n')
+            else if (peek == '\n' || peek == '\r') {
                 addLine();
+            }
             else if (peek == '\0') {
                 addLine();
                 return new Token(Tag.End);

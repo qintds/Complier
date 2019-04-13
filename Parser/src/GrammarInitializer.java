@@ -147,12 +147,12 @@ public class GrammarInitializer {
 //                | ReturnStmt
 //                | IfElseStmt
 //                | RepeatStmt
-        generateProduction(Tag.Stmt, new Tag[]{Tag.Exp}, false);
-        generateProduction(Tag.Stmt, new Tag[]{Tag.MultiAssignment}, false);
-        generateProduction(Tag.Stmt, new Tag[]{Tag.CompSt}, false);
-        generateProduction(Tag.Stmt, new Tag[]{Tag.ReturnStmt}, false);
-        generateProduction(Tag.Stmt, new Tag[]{Tag.IfElseStmt}, false);
-        generateProduction(Tag.Stmt, new Tag[]{Tag.RepeatStmt}, false);
+        generateProduction(Tag.Stmt, new Tag[]{Tag.Exp, Tag.LF}, false);
+        generateProduction(Tag.Stmt, new Tag[]{Tag.MultiAssignment, Tag.LF}, false);
+        generateProduction(Tag.Stmt, new Tag[]{Tag.CompSt, Tag.LF}, false);
+        generateProduction(Tag.Stmt, new Tag[]{Tag.ReturnStmt, Tag.LF}, false);
+        generateProduction(Tag.Stmt, new Tag[]{Tag.IfElseStmt, Tag.LF}, false);
+        generateProduction(Tag.Stmt, new Tag[]{Tag.RepeatStmt, Tag.LF}, false);
 
 //        ReturnStmt -> RETURN ReturnParam | RETURN
         generateProduction(Tag.ReturnStmt, new Tag[]{Tag.Return, Tag.RepeatParam}, false);

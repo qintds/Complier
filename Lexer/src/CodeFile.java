@@ -4,6 +4,7 @@ public class CodeFile {
     public int totalLine = 0;
     public Vector<CodeLine> lineList = new Vector<CodeLine>();
     private boolean isRead = false;
+    private boolean isEnd = false;
     private int presentLineNum = 0;
     private int presentTokenNum = 0;
     private CodeLine presentLine = new CodeLine();
@@ -22,6 +23,7 @@ public class CodeFile {
     public void initRead() {
         if (!isRead) {
             isRead = true;
+            isEnd = false;
             presentLineNum = 0;
             presentTokenNum = 0;
             presentLine = lineList.get(presentLineNum);
@@ -29,12 +31,16 @@ public class CodeFile {
     }
 
     public Token next() {
+        if (isEnd) return null;
         if (presentTokenNum >= presentLine.totalTokenCount) {
             presentTokenNum = 0;
-            if (presentLineNum >= lineList.size())
-                return presentToken;
-            else
-                presentLine = lineList.get(presentLineNum++);
+            if (presentLineNum >= lineList.size() - 1) {
+                isEnd = true;
+                return new Token(Tag.End);
+            } else {
+                presentLineNum++;
+                presentLine = lineList.get(presentLineNum);
+            }
         }
         previousToken = presentToken;
         presentToken = presentLine.get(presentTokenNum++);

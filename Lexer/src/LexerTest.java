@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+import java.util.Vector;
 
 public class LexerTest {
     public static void main(String[] args) {
@@ -14,6 +14,10 @@ public class LexerTest {
 ////        Lexer lex = new Lexer("codeFile");
 ////        lex.run();
 ////        printCF(lex.presentFile);
+        Vector<Integer> abc = new Vector<>();
+        abc.add(1);
+        abc.add(2);
+        System.out.println(abc.get(3));
 
     }
 

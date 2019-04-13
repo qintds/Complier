@@ -313,15 +313,18 @@ public class TreeBuilder{
             case ReturnStmt_To_Return:
                 node = CNodeFactroy.createCNode(Tag.ReturnStmt);
                 break;
-            case Stmt_To_CompSt:
-            case Stmt_To_Exp:
-            case Stmt_To_IfElseStmt:
-            case Stmt_To_MultiAssignment:
-            case Stmt_To_RepeatStmt:
-            case Stmt_To_ReturnStmt:
+            case Stmt_To_CompSt_LF:
+            case Stmt_To_Exp_LF:
+            case Stmt_To_IfElseStmt_LF:
+            case Stmt_To_MultiAssignment_LF:
+            case Stmt_To_RepeatStmt_LF:
+            case Stmt_To_ReturnStmt_LF:
+                collapse = true;
+                node = (CNode)valueStack.get(valueStack.size() - 2);
+                break;
             case StmtList_To_Stmt:
                 collapse = true;
-                node = (CNode) valueStack.peek();
+                node = (CNode)valueStack.peek();
                 break;
             case StmtList_To_StmtList_Stmt:
                 node = CNodeFactroy.createCNode(Tag.StmtList);

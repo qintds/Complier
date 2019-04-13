@@ -59,8 +59,14 @@ public class GrammarState {
                 continue;
             }
             Tag symbolTag = production.getDotSymbol();
+
+
             ArrayList<Production> symbolProductions = productionManager.getProductionsByLeft(symbolTag);
             ArrayList<Tag> lookAhead = production.computeDotSymbolFirstSetOfBetaAndA();
+            if(symbolTag == Tag.Exp && lookAhead.contains(Tag.LBracket)) {
+                System.out.println("!");
+            }
+
 
             Iterator iterator = symbolProductions.iterator();
             while (iterator.hasNext()) {
