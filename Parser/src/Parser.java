@@ -20,7 +20,7 @@ public class Parser {
         GrammarStateManager stateManager = GrammarStateManager.getInstance();
         stateManager.buildTransitionStateMechine();
 
-        Lexer lexer = new Lexer("codeFile");
+        Lexer lexer = new Lexer("codeFile1");
         lexer.run();
 
         printCF(lexer.presentFile);
