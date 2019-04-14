@@ -7,7 +7,7 @@
       <sourceFolder url="file://$MODULE_DIR$" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
-    <orderEntry type="jdk" jdkName="1.8.0_201" jdkType="JavaSDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: org.bytedeco.javacpp-presets:llvm:7.0.1-1.4.4" level="project" />
     <orderEntry type="library" name="Maven: org.bytedeco:javacpp:1.4.4" level="project" />

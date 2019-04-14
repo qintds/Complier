@@ -6,6 +6,7 @@ public class ProgramExecutor {
     CNode pointer;
     Stack<CNode> nodeStack;
     int statusNum = 0;
+    int level;
 
     public ProgramExecutor(CNode root) {
         this.root = root;
@@ -16,14 +17,14 @@ public class ProgramExecutor {
 
     public int run() {
         if (root.production == GrammarEnum.Program_To_ExtDefList) {
-
+            extDefList(root.children.get(0));
         } else {
 
         }
         return statusNum;
     }
 
-    public void extDefList() {
-
+    public void extDefList(CNode node) {
+        
     }
 }

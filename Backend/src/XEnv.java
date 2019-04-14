@@ -4,6 +4,7 @@ public class XEnv {
 
     public HashMap<String, XObject> variableMap = new HashMap<>();
     public HashMap<String, XFuncObject> functionMap = new HashMap<>();
+    public int level;
 
     public XEnv parent;
 
