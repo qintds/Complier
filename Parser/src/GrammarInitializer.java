@@ -316,8 +316,8 @@ public class GrammarInitializer {
 
         // Stmt -> BREAK
         //      | CONTINUE
-        generateProduction(Tag.Stmt, new Tag[]{Tag.Break}, false);
-        generateProduction(Tag.Stmt, new Tag[]{Tag.Continue}, false);
+        generateProduction(Tag.Stmt, new Tag[]{Tag.Break, Tag.LF}, false);
+        generateProduction(Tag.Stmt, new Tag[]{Tag.Continue, Tag.LF}, false);
     }
 
     private void generateProduction(Tag left, Tag [] arr, boolean nullable) {

@@ -23,25 +23,27 @@ public class TreeBuilder{
         CNode node = null;
         CNode temp = null;
         // when collapsing single to single reduction, don't refresh node's production num
-        boolean collapse = false;
+        // DON'T SUGGEST TO COLLAPSE THE NODE
+        // NOT GOOD FOR EXECUTING
+//        boolean collapse = false;
         GrammarEnum n = GrammarEnum.values()[productionNum];
         switch (n) {
             case Primary_To_Num:
                 node = CNodeFactroy.createCNode(Tag.Primary);
-                node.setObject(new XNumObject((Num)valueStack.peek()));
+                node.setXObject(new XNumObject((Num)valueStack.peek()));
                 break;
             case Primary_To_Real:
                 node = CNodeFactroy.createCNode(Tag.Primary);
-                node.setObject(new XRealObject((Real)valueStack.peek()));
+                node.setXObject(new XRealObject((Real)valueStack.peek()));
                 break;
             case Primary_To_True:
             case Primary_To_False:
                 node = CNodeFactroy.createCNode(Tag.Primary);
-                node.setObject(new XBoolObject((Word)valueStack.peek()));
+                node.setXObject(new XBoolObject((Word)valueStack.peek()));
                 break;
             case Primary_To_String:
                 node = CNodeFactroy.createCNode(Tag.Primary);
-                node.setObject(new XStringObject((Word)valueStack.peek()));
+                node.setXObject(new XStringObject((Word)valueStack.peek()));
                 break;
             case Primary_To_LBracket_NoAssignExp_RBracket:
                 node = CNodeFactroy.createCNode(Tag.Primary);
@@ -59,8 +61,7 @@ public class TreeBuilder{
             case NoAssignExp_To_ConditionOrExp:
             case AssignmentExp_To_NoAssignExp:
             case AssignmentExp_To_Assignment:
-                collapse = true;
-                node = (CNode) valueStack.peek();
+                node = singleToSingle();
                 //node = CNodeFactroy.createCNode(Tag.Primary);
                 //node.addChild();
                 break;
@@ -100,14 +101,14 @@ public class TreeBuilder{
                 node = CNodeFactroy.createCNode(Tag.AssignableValue);
                 node.addChild((CNode)valueStack.get(valueStack.size() - 4));
                 temp = CNodeFactroy.createCNode(Tag.Num);
-                temp.setObject(new XNumObject((Num)valueStack.get(valueStack.size() - 2)));
+                temp.setXObject(new XNumObject((Num)valueStack.get(valueStack.size() - 2)));
                 node.addChild(temp);
                 break;
             case AssignableValue_To_Variable_LSquare_String_RSquare:
                 node = CNodeFactroy.createCNode(Tag.AssignableValue);
                 node.addChild((CNode)valueStack.get(valueStack.size() - 4));
                 temp = CNodeFactroy.createCNode(Tag.String);
-                temp.setObject(new XStringObject((String) valueStack.get(valueStack.size() - 2)));
+                temp.setXObject(new XStringObject((String) valueStack.get(valueStack.size() - 2)));
                 node.addChild(temp);
                 break;
             case AssignableValue_To_Variable_LSquare_Variable_RSquare:
@@ -118,8 +119,7 @@ public class TreeBuilder{
                 break;
             case Variable_To_AssignableValue:
             case Variable_To_FuncInvocation:
-                collapse = true;
-                node = (CNode) valueStack.peek();
+                node = singleToSingle();
                 break;
             case Variable_To_Variable_Dot_FuncInvocation:
                 node = CNodeFactroy.createCNode(Tag.Variable);
@@ -141,8 +141,7 @@ public class TreeBuilder{
                 break;
             case LeftSide_To_AssignableValue:
             case LeftSide_To_ListAndTuple:
-                collapse = true;
-                node = (CNode) valueStack.peek();
+                node = singleToSingle();
                 break;
             case MultiAssignment_To_AssignableValue_Assign_Dictionary:
             case MultiAssignment_To_AssignableValue_Assign_ListAndTuple:
@@ -159,8 +158,7 @@ public class TreeBuilder{
             case Assignment_To_MultiAssignment:
             case Exp_To_AssignmentExp:
             case Args_To_Exp:
-                collapse = true;
-                node = (CNode) valueStack.peek();
+                node = singleToSingle();
                 break;
             case Args_To_Args_Comma_Exp:
                 node = CNodeFactroy.createCNode(Tag.Args);
@@ -172,8 +170,7 @@ public class TreeBuilder{
             case Item_To_Tuple:
             case Item_To_Primary:
             case ItemList_To_Item:
-                collapse = true;
-                node = (CNode) valueStack.peek();
+                node = singleToSingle();
                 break;
             case ItemList_To_ItemList_Comma_Item:
                 node = CNodeFactroy.createCNode(Tag.ItemList);
@@ -198,8 +195,7 @@ public class TreeBuilder{
                 node.addChild((CNode)valueStack.get(valueStack.size() - 1));
                 break;
             case MapList_To_Map:
-                collapse = true;
-                node = (CNode) valueStack.peek();
+                node = singleToSingle();
                 break;
             case Dictionary_To_LBrace_MapList_RBrace:
                 node = CNodeFactroy.createCNode(Tag.Dictionary);
@@ -225,8 +221,7 @@ public class TreeBuilder{
                 node.addChild((CNode)valueStack.get(valueStack.size() - 1));
                 break;
             case TupleFollow_To_Item:
-                collapse = true;
-                node = (CNode) valueStack.peek();
+                node = singleToSingle();
                 break;
             case Tuple_To_LBracket_TupleStart_RBracket:
                 node = CNodeFactroy.createCNode(Tag.TupleFollow);
@@ -239,8 +234,7 @@ public class TreeBuilder{
             case ListAndTuple_To_List:
             case ListAndTuple_To_Tuple:
             case ListAndTuple_To_TupleNoBracket:
-                collapse = true;
-                node = (CNode) valueStack.peek();
+                node = singleToSingle();
                 break;
             case Stmt_To_Break:
                 node = CNodeFactroy.createCNode(Tag.Break);
@@ -255,8 +249,7 @@ public class TreeBuilder{
             case IterateValue_To_List:
             case IterateValue_To_Tuple:
             case IterateValue_To_Variable:
-                collapse = true;
-                node = (CNode) valueStack.peek();
+                node = singleToSingle();
                 break;
             case RepeatParam_To_RepeatParam_Comma_Identifier:
                 node = CNodeFactroy.createCNode(Tag.RepeatParam);
@@ -292,8 +285,7 @@ public class TreeBuilder{
                 break;
             case ElifStmt_To_IfStmt:
             case IfElseStmt_To_ElifStmt:
-                collapse = true;
-                node = (CNode) valueStack.peek();
+                node = singleToSingle();
                 break;
             case IfElseStmt_To_IfElseStmt_Else_CompSt:
                 node = CNodeFactroy.createCNode(Tag.IfElseStmt);
@@ -303,8 +295,7 @@ public class TreeBuilder{
             case ReturnParam_To_Dictionary:
             case ReturnParam_To_ListAndTuple:
             case ReturnParam_To_NoAssignExp:
-                collapse = true;
-                node = (CNode) valueStack.peek();
+                node = singleToSingle();
                 break;
             case ReturnStmt_To_Return_RepeatParam:
                 node = CNodeFactroy.createCNode(Tag.ReturnStmt);
@@ -319,12 +310,11 @@ public class TreeBuilder{
             case Stmt_To_MultiAssignment_LF:
             case Stmt_To_RepeatStmt_LF:
             case Stmt_To_ReturnStmt_LF:
-                collapse = true;
-                node = (CNode)valueStack.get(valueStack.size() - 2);
+                node = CNodeFactroy.createCNode(Tag.Stmt);
+                node.addChild((CNode) valueStack.get(valueStack.size() - 2));
                 break;
             case StmtList_To_Stmt:
-                collapse = true;
-                node = (CNode)valueStack.peek();
+                node = singleToSingle();
                 break;
             case StmtList_To_StmtList_Stmt:
                 node = CNodeFactroy.createCNode(Tag.StmtList);
@@ -396,8 +386,7 @@ public class TreeBuilder{
             case ClassBodyDeclaration_To_FuncDeclaration:
             case ClassBodyDeclarations_To_ClassBodyDeclaration:
             case Super_To_PackageChain:
-                collapse = true;
-                node = (CNode) valueStack.peek();
+                node = singleToSingle();
                 break;
             case ClassBodyDeclarations_To_ClassBodyDeclarations_ClassBodyDeclaration:
                 node = CNodeFactroy.createCNode(Tag.ClassBodyDeclarations);
@@ -448,12 +437,10 @@ public class TreeBuilder{
             case ExtDef_To_ClassDeclaration:
             case ExtDef_To_ImportDeclaration:
             case ExtDef_To_StmtList:
-                collapse = true;
-                node = (CNode) valueStack.peek();
+                node = singleToSingle();
                 break;
             case ExtDef_To_FuncDeclaration:
-                collapse = true;
-                node = (CNode) valueStack.peek();
+                node = singleToSingle();
                 recordNormalFunction();
                 break;
             case ExtDefList_To_ExtDef:
@@ -472,9 +459,15 @@ public class TreeBuilder{
                 break;
         }
 
-        if (node != null && !collapse) {
+        if (node != null) {
             node.production = n;
         }
+        return node;
+    }
+
+    public CNode singleToSingle() {
+        CNode node = CNodeFactroy.createCNode(Tag.STS);
+        node.addChild((CNode)valueStack.get(valueStack.size() - 1));
         return node;
     }
 
@@ -513,144 +506,5 @@ public class TreeBuilder{
         }
         classMap.put(newClass.getClassName(), newClass);
     }
-
-
-
-
-    private XObject unaryExpNot(XObject x) {
-        if (x.type == XType.xBool) {
-            XBoolObject xBool = (XBoolObject)x;
-            xBool.value = !xBool.value;
-            return xBool;
-        } else {
-            //error
-            return null;
-        }
-    }
-
-    private XObject unaryExpSub(XObject x) {
-        if (x.type == XType.xNum) {
-            XNumObject xNum = (XNumObject)x;
-            xNum.value = - xNum.value;
-            return xNum;
-        } else if (x.type == XType.xReal) {
-            XRealObject xReal = (XRealObject)x;
-            xReal.value = - xReal.value;
-            return xReal;
-        } else {
-            //error
-            return null;
-        }
-    }
-
-    private XObject binaryExp(XObject a, XObject b, Token op) {
-        if (a.type == b.type){
-            XType bothType = a.type;
-            if (bothType == XType.xNum) {
-                return numBinaryExp((XNumObject)a, (XNumObject)b, op);
-            } else if (bothType == XType.xReal) {
-                return realBinaryExp((XRealObject)a, (XRealObject)b, op);
-            } else if (bothType == XType.xString) {
-                return stringBinaryExp((XStringObject)a, (XStringObject)b, op);
-            } else if (bothType == XType.xBool) {
-                return boolBinaryExp((XBoolObject)a, (XBoolObject)b, op);
-            } else if (bothType == XType.xInstance) {
-                // user define class operator
-            } else if (bothType == XType.xList) {
-
-            }
-        } else {
-            if (a.type == XType.xReal && b.type ==XType.xNum
-                    || a.type == XType.xNum && b.type ==XType.xReal) {
-                return realBinaryExp((XRealObject)a, (XRealObject)b, op);
-            }
-        }
-        return null;
-    }
-
-    private XObject numBinaryExp(XNumObject a, XNumObject b, Token op) {
-        if (op.tag == Tag.Add)
-            return new XNumObject(a.value + b.value);
-        if (op.tag == Tag.Sub)
-            return new XNumObject(a.value - b.value);
-        if (op.tag == Tag.Mul)
-            return new XNumObject(a.value * b.value);
-        if (op.tag == Tag.Div)
-            return new XNumObject(a.value / b.value);
-        if (op.tag == Tag.Mod)
-            return new XNumObject(a.value % b.value);
-        if (op.tag == Tag.LT)
-            return new XBoolObject(a.value < b.value);
-        if (op.tag == Tag.GT)
-            return new XBoolObject(a.value > b.value);
-        if (op.tag == Tag.LE)
-            return new XBoolObject(a.value <= b.value);
-        if (op.tag == Tag.GE)
-            return new XBoolObject(a.value >= b.value);
-        if (op.tag == Tag.EQ)
-            return new XBoolObject(a.value == b.value);
-        if (op.tag == Tag.NE)
-            return new XBoolObject(a.value != b.value);
-        else {
-            //error
-        }
-        return null;
-    }
-
-    private XObject realBinaryExp(XRealObject a, XRealObject b, Token op) {
-        if (op.tag == Tag.Add)
-            return new XRealObject(a.value + b.value);
-        if (op.tag == Tag.Sub)
-            return new XRealObject(a.value - b.value);
-        if (op.tag == Tag.Mul)
-            return new XRealObject(a.value * b.value);
-        if (op.tag == Tag.Div)
-            return new XRealObject(a.value / b.value);
-        if (op.tag == Tag.LT)
-            return new XBoolObject(a.value < b.value);
-        if (op.tag == Tag.GT)
-            return new XBoolObject(a.value > b.value);
-        if (op.tag == Tag.LE)
-            return new XBoolObject(a.value <= b.value);
-        if (op.tag == Tag.GE)
-            return new XBoolObject(a.value >= b.value);
-        if (op.tag == Tag.EQ)
-            return new XBoolObject(a.value == b.value);
-        if (op.tag == Tag.NE)
-            return new XBoolObject(a.value != b.value);
-        else {
-            //error
-        }
-        return null;
-    }
-
-    private XObject boolBinaryExp(XBoolObject a, XBoolObject b, Token op) {
-        if (op.tag == Tag.And)
-            return new XBoolObject(a.value && b.value);
-        if (op.tag == Tag.Or)
-            return new XBoolObject(a.value || b.value);
-        if (op.tag == Tag.EQ)
-            return new XBoolObject(a.value == b.value);
-        if (op.tag == Tag.NE)
-            return new XBoolObject(a.value != b.value);
-        else {
-            //error
-        }
-        return null;
-    }
-
-    private XObject stringBinaryExp(XStringObject a, XStringObject b, Token op) {
-        if (op.tag == Tag.Add)
-            return new XStringObject(a.value + b.value);
-        if (op.tag == Tag.EQ)
-            return new XBoolObject(a.value == b.value);
-        if (op.tag == Tag.NE)
-            return new XBoolObject(a.value != b.value);
-        else {
-            //error
-        }
-        return null;
-    }
-
 
 }

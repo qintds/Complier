@@ -62,6 +62,8 @@ public enum Tag {
 
         Comment, // //
 
+        STS, // single to single unified tag
+
         Unknown,
         End,
         NonTerminal, // Start of nonTerminal which separate terminal and NonTerminal

@@ -8,6 +8,11 @@ public class CNode {
     public ArrayList<CNode> children;
     public GrammarEnum production;
 
+    // if tag is IDENTIFIER, set identifier
+    private String identifier;
+    private XObject xObject;
+    private boolean isChildrenReverse = false;
+
     public String getIdentifier() {
         return identifier;
     }
@@ -22,12 +27,12 @@ public class CNode {
         }
     }
 
-    public XObject getObject() {
-        return object;
+    public XObject getXObject() {
+        return xObject;
     }
 
-    public void setObject(XObject object) {
-        this.object = object;
+    public void setXObject(XObject object) {
+        this.xObject = object;
     }
 
     public boolean isChildrenReverse() {
@@ -38,10 +43,7 @@ public class CNode {
         isChildrenReverse = childrenReverse;
     }
 
-    // if tag is IDENTIFIER, set identifier
-    private String identifier;
-    private XObject object;
-    private boolean isChildrenReverse = false;
+
 
     public CNode(Tag tag) {
         this.tag = tag;
@@ -54,6 +56,10 @@ public class CNode {
             children.add(node);
             node.parent = this;
         }
+    }
+
+    public CNode getChild(int i) {
+        return children.get(i);
     }
 
     public void reverseChildren() {

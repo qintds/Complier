@@ -131,7 +131,7 @@ Exp -> AssignmentExp
 Args -> Args , Exp | Exp
 
 
-Stmt -> BREAK
-      | CONTINUE
+Stmt -> BREAK LF
+      | CONTINUE LF
 
 
