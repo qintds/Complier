@@ -7,6 +7,7 @@ public abstract class XObject {
 
     public abstract void print();
     public abstract void genCode();
+    public abstract boolean equals(XObject object);
     public void refAdd() {
         refCount++;
     }

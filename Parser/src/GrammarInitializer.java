@@ -170,9 +170,9 @@ public class GrammarInitializer {
         generateProduction(Tag.ElifStmt, new Tag[]{Tag.IfStmt}, false);
         generateProduction(Tag.ElifStmt, new Tag[]{Tag.ElifStmt, Tag.Elif, Tag.NoAssignExp, Tag.CompSt}, false);
 //        IfElseStmt -> ElifStmt
-//                | IfElseStmt ELSE CompSt
+//                | ElifStmt ELSE CompSt
         generateProduction(Tag.IfElseStmt, new Tag[]{Tag.ElifStmt}, false);
-        generateProduction(Tag.IfElseStmt, new Tag[]{Tag.IfElseStmt, Tag.Else, Tag.CompSt}, false);
+        generateProduction(Tag.IfElseStmt, new Tag[]{Tag.ElifStmt, Tag.Else, Tag.CompSt}, false);
 //
 //        RepeatStmt -> REPEAT RepeatCond CompSt
         generateProduction(Tag.RepeatStmt, new Tag[]{Tag.Repeat, Tag.RepeatCond, Tag.CompSt}, false);

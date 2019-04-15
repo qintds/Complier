@@ -11,6 +11,22 @@ public class CNode {
     // if tag is IDENTIFIER, set identifier
     private String identifier;
     private XObject xObject;
+    private XObject brother;
+    private boolean hasBrother = false;
+
+    public XObject getBrother() {
+        return brother;
+    }
+
+    public void setBrother(XObject brother) {
+        this.brother = brother;
+        this.hasBrother = true;
+    }
+
+    public boolean hasBrother() {
+        return hasBrother;
+    }
+
     private boolean isChildrenReverse = false;
 
     public String getIdentifier() {
@@ -70,6 +86,7 @@ public class CNode {
         Collections.reverse(children);
         isChildrenReverse = true;
     }
+
 
 
 

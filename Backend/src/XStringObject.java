@@ -19,4 +19,9 @@ public class XStringObject extends XObject {
     public void genCode() {
 
     }
+
+    @Override
+    public boolean equals(XObject object) {
+        return false;
+    }
 }

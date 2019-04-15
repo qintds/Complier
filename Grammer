@@ -60,7 +60,7 @@ IfStmt -> IF NoAssignExp CompSt
 ElifStmt -> IfStmt |
             ElifStmt elif NoAssignExp CompSt
 IfElseStmt -> ElifStmt
-            | IfElseStmt ELSE CompSt
+            | ElifStmt ELSE CompSt
 
 RepeatStmt -> REPEAT RepeatCond CompSt
 RepeatParam -> IDENTIFIER | RepeatParam , IDENTIFIER

@@ -28,6 +28,11 @@ public class XFuncObject extends XObject {
 
     }
 
+    @Override
+    public boolean equals(XObject object) {
+        return false;
+    }
+
     public HashMap<String, XObject> getParams() {
         return params;
     }

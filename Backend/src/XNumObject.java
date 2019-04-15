@@ -19,4 +19,12 @@ public class XNumObject extends XObject {
     public void genCode() {
 
     }
+
+    @Override
+    public boolean equals(XObject object) {
+        if (object.type == XType.xNum) {
+            return ((XNumObject)object).value == this.value;
+        }
+        return false;
+    }
 }

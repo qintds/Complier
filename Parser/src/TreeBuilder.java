@@ -224,11 +224,11 @@ public class TreeBuilder{
                 node = singleToSingle();
                 break;
             case Tuple_To_LBracket_TupleStart_RBracket:
-                node = CNodeFactroy.createCNode(Tag.TupleFollow);
+                node = CNodeFactroy.createCNode(Tag.Tuple);
                 node.addChild((CNode)valueStack.get(valueStack.size() - 2));
                 break;
             case TupleNoBracket_To_TupleStart:
-                node = CNodeFactroy.createCNode(Tag.TupleFollow);
+                node = CNodeFactroy.createCNode(Tag.Tuple);
                 node.addChild((CNode)valueStack.get(valueStack.size() - 1));
                 break;
             case ListAndTuple_To_List:
@@ -287,7 +287,7 @@ public class TreeBuilder{
             case IfElseStmt_To_ElifStmt:
                 node = singleToSingle();
                 break;
-            case IfElseStmt_To_IfElseStmt_Else_CompSt:
+            case IfElseStmt_To_ElifStmt_Else_CompSt:
                 node = CNodeFactroy.createCNode(Tag.IfElseStmt);
                 node.addChild((CNode)valueStack.get(valueStack.size() - 3));
                 node.addChild((CNode)valueStack.get(valueStack.size() - 1));

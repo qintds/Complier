@@ -25,4 +25,12 @@ public class XRealObject extends XObject {
     public void genCode() {
 
     }
+
+    @Override
+    public boolean equals(XObject object) {
+        if (object.type == XType.xReal) {
+            return ((XRealObject)object).value == this.value;
+        }
+        return false;
+    }
 }

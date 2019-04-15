@@ -7,7 +7,10 @@ public class ProgramExecutor {
     Stack<CNode> nodeStack;
     int statusNum = 0;
     int level;
-
+    AssignLeftStruct assignObject;
+    XObject rightValue;
+    XBoolObject TRUE = new XBoolObject(true);
+    XBoolObject FALSE = new XBoolObject(false);
     public ProgramExecutor(CNode root) {
         this.root = root;
         runEnv = new XEnv(null);
@@ -74,8 +77,6 @@ public class ProgramExecutor {
     }
 public void	ClassDeclaration	(CNode node)	{
         switch (node.production) {}}
-public void	SuperOpt	(CNode node)	{
-        switch (node.production) {}}
 public void	Super	(CNode node)	{
         switch (node.production) {}}
 public void	ClassBody	(CNode node)	{
@@ -88,44 +89,156 @@ public void	ClassMemberDeclaration	(CNode node)	{
         switch (node.production) {}}
 public void	FuncDeclaration	(CNode node)	{
         switch (node.production) {}}
-public void	ParamListOpt	(CNode node)	{
-        switch (node.production) {}}
 public void	ParamList	(CNode node)	{
         switch (node.production) {}}
 public void	DefaultValue	(CNode node)	{
         switch (node.production) {}}
-public void	Dictionary	(CNode node)	{
-        switch (node.production) {}}
-public void	MapListOpt	(CNode node)	{
-        switch (node.production) {}}
-public void	MapList	(CNode node)	{
-        switch (node.production) {}}
-public void	Map	(CNode node)	{
-        switch (node.production) {}}
-public void	List	(CNode node)	{
-        switch (node.production) {}}
-public void	ItemListOpt	(CNode node)	{
-        switch (node.production) {}}
-public void	ItemList	(CNode node)	{
-        switch (node.production) {}}
-public void	TupleStart	(CNode node)	{
-        switch (node.production) {}}
-public void	TupleFollowOpt	(CNode node)	{
-        switch (node.production) {}}
-public void	TupleFollow	(CNode node)	{
-        switch (node.production) {}}
-public void	Item	(CNode node)	{
-        switch (node.production) {}}
-public void	Tuple	(CNode node)	{
-        switch (node.production) {}}
-public void	TupleNoBracket	(CNode node)	{
-        switch (node.production) {}}
-public void	ListAndTuple	(CNode node)	{
-        switch (node.production) {}}
-public void	CompSt	(CNode node)	{
-        switch (node.production) {}}
-public void	StmtListOpt	(CNode node)	{
-        switch (node.production) {}}
+    public void	Dictionary(CNode node) {
+        XDictObject dictObject = new XDictObject();
+        switch (node.production) {
+            case Dictionary_To_LBrace_MapList_RBrace:
+                node.getChild(0).setBrother(dictObject);
+                MapList(node.getChild(0));
+                node.setXObject(dictObject);
+                break;
+            case Dictionary_To_LBrace_RBrace:
+                node.setXObject(dictObject);
+                break;
+        }
+        node.setXObject(dictObject);
+    }
+    public void	MapList	(CNode node) {
+        node.getChild(0).setBrother(node.getBrother());
+        switch (node.production) {
+            case MapList_To_Map:
+                Map(node.getChild(0));
+                break;
+            case MapList_To_MapList_Comma_Map:
+                MapList(node.getChild(0));
+                node.getChild(1).setBrother(node.getBrother());
+                Map(node.getChild(1));
+                break;
+        }
+    }
+    public void	Map	(CNode node) {
+        switch (node.production) {
+            case Map_To_Primary_Colon_Item:
+                Primary(node.getChild(0));
+                Item(node.getChild(1));
+                ((XDictObject)node.getBrother()).put(node.getChild(0).getXObject(), node.getChild(1).getXObject());
+                break;
+        }
+    }
+    public void	List(CNode node) {
+        XListObject listObject = new XListObject();
+        switch (node.production) {
+            case List_To_LSquare_ItemList_RSquare:
+                node.getChild(0).setBrother(listObject);
+                ItemList(node.getChild(0));
+                node.setXObject(listObject);
+                break;
+            case List_To_LSquare_RSquare:
+                node.setXObject(listObject);
+                break;
+        }
+        node.setXObject(listObject);
+    }
+    public void	ItemList(CNode node) {
+        switch (node.production) {
+            case ItemList_To_Item:
+                Item(node.getChild(0));
+                ((XListObject)node.getBrother()).add(node.getChild(0).getXObject());
+                break;
+            case ItemList_To_ItemList_Comma_Item:
+                node.getChild(0).setBrother(node.getBrother());
+                ItemList(node.getChild(0));
+                Item(node.getChild(1));
+                ((XListObject)node.getBrother()).add(node.getChild(1).getXObject());
+                break;
+        }
+    }
+    public void	TupleStart(CNode node) {
+        switch (node.production) {
+            case TupleStart_To_Item_Comma_Item:
+                Item(node.getChild(0));
+                Item(node.getChild(1));
+                ((XTupleObject)node.getBrother()).initial(node.getChild(0).getXObject());
+                ((XTupleObject)node.getBrother()).initial(node.getChild(1).getXObject());
+                break;
+            case TupleStart_To_Item_Comma_Item_TupleFollow:
+                Item(node.getChild(0));
+                Item(node.getChild(1));
+                ((XTupleObject)node.getBrother()).initial(node.getChild(0).getXObject());
+                ((XTupleObject)node.getBrother()).initial(node.getChild(1).getXObject());
+                node.getChild(2).setBrother(node.getBrother());
+                TupleFollow(node.getChild(2));
+                break;
+        }
+    }
+    public void	TupleFollow(CNode node) {
+        switch (node.production) {
+            case TupleFollow_To_Item:
+                Item(node.getChild(0));
+                ((XTupleObject)node.getBrother()).initial(node.getChild(0).getXObject());
+                break;
+            case TupleFollow_To_TupleFollow_Comma_Item:
+                node.getChild(0).setBrother(node.getBrother());
+                TupleFollow(node.getChild(0));
+                Item(node.getChild(1));
+                ((XTupleObject)node.getBrother()).initial(node.getChild(1).getXObject());
+                break;
+        }
+    }
+    public void	Item(CNode node) {
+        switch (node.production) {
+            case Item_To_Dictionary:
+                Dictionary(node.getChild(0));
+                break;
+            case Item_To_List:
+                List(node.getChild(0));
+                break;
+            case Item_To_Primary:
+                Primary(node.getChild(0));
+                break;
+            case Item_To_Tuple:
+                Tuple(node.getChild(0));
+                break;
+        }
+        node.setXObject(node.getChild(0).getXObject());
+    }
+    public void	Tuple(CNode node) {
+        XTupleObject tupleObject = new XTupleObject();
+        switch (node.production) {
+            case Tuple_To_LBracket_TupleStart_RBracket:
+                node.getChild(0).setBrother(tupleObject);
+                TupleStart(node.getChild(0));
+                break;
+        }
+        tupleObject.setSettle();
+        node.setXObject(tupleObject);
+    }
+
+    public void	ListAndTuple(CNode node) {
+        switch (node.production) {
+            case ListAndTuple_To_List:
+                List(node.getChild(0));
+                break;
+            case ListAndTuple_To_Tuple:
+            case ListAndTuple_To_TupleNoBracket:
+                Tuple(node.getChild(0));
+                break;
+        }
+        node.setXObject(node.getChild(0).getXObject());
+    }
+    public void	CompSt(CNode node) {
+        switch (node.production) {
+            case CompSt_To_LBrace_RBrace:
+                break;
+            case CompSt_To_LBrace_StmtList_RBrace:
+                StmtList(node.getChild(0));
+                break;
+        }
+    }
     public void	StmtList(CNode node) {
         switch (node.production) {
             case StmtList_To_Stmt:
@@ -146,6 +259,7 @@ public void	StmtListOpt	(CNode node)	{
             case Stmt_To_Exp_LF:
                 Exp(node.getChild(0));break;
             case Stmt_To_IfElseStmt_LF:
+                IfElseStmt(node.getChild(0));break;
             case Stmt_To_MultiAssignment_LF:
             case Stmt_To_RepeatStmt_LF:
             case Stmt_To_ReturnStmt_LF:
@@ -154,12 +268,50 @@ public void	ReturnStmt	(CNode node)	{
         switch (node.production) {}}
 public void	ReturnParam	(CNode node)	{
         switch (node.production) {}}
-public void	IfStmt	(CNode node)	{
-        switch (node.production) {}}
-public void	ElifStmt	(CNode node)	{
-        switch (node.production) {}}
-public void	IfElseStmt	(CNode node)	{
-        switch (node.production) {}}
+    public void	IfStmt(CNode node) {
+        switch (node.production) {
+            case IfStmt_To_If_NoAssignExp_CompSt:
+                NoAssignExp(node.getChild(0));
+                if (node.getChild(0).getXObject() == TRUE) {
+                    CompSt(node.getChild(1));
+                }
+                node.setXObject(node.getChild(0).getXObject());
+        }
+    }
+    public void	ElifStmt(CNode node) {
+        switch (node.production) {
+            case ElifStmt_To_IfStmt:
+                IfStmt(node.getChild(0));
+                node.setXObject(node.getChild(0).getXObject());
+                break;
+            case ElifStmt_To_ElifStmt_Elif_NoAssignExp_CompSt:
+                ElifStmt(node.getChild(0));
+                if (node.getChild(0).getXObject() == FALSE) {
+                    NoAssignExp(node.getChild(1));
+                    if (node.getChild(1).getXObject() == TRUE) {
+                        CompSt(node.getChild(2));
+                    }
+                    node.setXObject(node.getChild(1).getXObject());
+                } else {
+                    node.setXObject(node.getChild(0).getXObject());
+                }
+                break;
+        }
+    }
+    public void	IfElseStmt(CNode node) {
+        switch (node.production) {
+            case IfElseStmt_To_ElifStmt:
+                ElifStmt(node.getChild(0));
+                break;
+            case IfElseStmt_To_ElifStmt_Else_CompSt:
+                ElifStmt(node.getChild(0));
+                if (node.getChild(0).getXObject() == FALSE) {
+                    CompSt(node.getChild(1));
+                }
+                break;
+
+        }
+    }
 public void	RepeatStmt	(CNode node)	{
         switch (node.production) {}}
 public void	RepeatParam	(CNode node)	{
@@ -170,10 +322,73 @@ public void	RepeatCond	(CNode node)	{
         switch (node.production) {}}
 public void	FuncInvocation	(CNode node)	{
         switch (node.production) {}}
-public void	AssignableValue	(CNode node)	{
-        switch (node.production) {}}
-public void	Variable	(CNode node)	{
-        switch (node.production) {}}
+    public void	AssignableValue	(CNode node, boolean assign) {
+        switch (node.production) {
+            case AssignableValue_To_Identifier:
+                if (assign) {
+                    assignObject.setType(AssignableType.single);
+                    assignObject.setIdentifier(node.getIdentifier());
+                    if (node.hasBrother()) {
+//                        assignObject.setValue(node.getBrother());
+                    } else {
+                        assignObject.setValue(rightValue, runEnv);
+                    }
+                } else {
+                    node.setXObject(runEnv.getVariable(node.getIdentifier()));
+                }
+            case AssignableValue_To_Variable_Dot_AssignableValue:
+                Variable(node.getChild(0));
+                node.getChild(1).setBrother(node.getChild(0).getXObject());
+                AssignableValue(node.getChild(1), assign);
+                node.setXObject(node.getChild(1).getXObject());
+                break;
+            case AssignableValue_To_Variable_LSquare_Num_RSquare:
+            case AssignableValue_To_Variable_LSquare_String_RSquare:
+                Variable(node.getChild(0));
+                if (assign) {
+                    assignObject.setType(AssignableType.square);
+                    assignObject.setSquare(node.getChild(0).getXObject(), node.getChild(1).getXObject());
+                    assignObject.setValue(rightValue, runEnv);
+                } else {
+                    // list or dict
+                }
+                break;
+            case AssignableValue_To_Variable_LSquare_NoAssignExp_RSquare:
+                Variable(node.getChild(0));
+                NoAssignExp(node.getChild(1));
+                if (assign) {
+                    assignObject.setType(AssignableType.square);
+                    assignObject.setSquare(node.getChild(0).getXObject(), node.getChild(1).getXObject());
+                    assignObject.setValue(rightValue, runEnv);
+                } else {
+                    // list or dict
+                }
+                break;
+            case AssignableValue_To_Variable_LSquare_Variable_RSquare:
+                Variable(node.getChild(0));
+                Variable(node.getChild(1));
+                if (assign) {
+                    assignObject.setType(AssignableType.square);
+                    assignObject.setSquare(node.getChild(0).getXObject(), node.getChild(1).getXObject());
+                    assignObject.setValue(rightValue, runEnv);
+                } else {
+                    // list or dict
+                }
+                break;
+        }
+    }
+    public void	Variable(CNode node) {
+        switch (node.production) {
+            case Variable_To_AssignableValue:
+                AssignableValue(node.getChild(0), false);
+                node.setXObject(node.getChild(0).getXObject());
+            case Variable_To_FuncInvocation:
+                FuncInvocation(node.getChild(0));
+                node.setXObject(node.getChild(0).getXObject());
+            case Variable_To_Variable_Dot_FuncInvocation:
+            case Variable_To_Self:
+        }
+    }
     public void	Primary	(CNode node) {
         switch (node.production) {
             case Primary_To_Num:
@@ -340,13 +555,16 @@ public void	Variable	(CNode node)	{
         switch (node.production) {
             case Assignment_To_LeftSide_Assign_AssignmentExp:
                 AssignmentExp(node.getChild(1));
-
+                rightValue = node.getChild(1).getXObject();
+                assignObject = new AssignLeftStruct();
+                LeftSide(node.getChild(0));
             case Assignment_To_MultiAssignment:
+
         }}
     public void	LeftSide(CNode node){
         switch (node.production) {
             case LeftSide_To_AssignableValue:
-                AssignableValue(node.getChild(0));
+                AssignableValue(node.getChild(0), true);
             case LeftSide_To_ListAndTuple:
         }
     }

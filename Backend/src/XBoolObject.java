@@ -24,4 +24,12 @@ public class XBoolObject extends XObject{
     public void genCode() {
 
     }
+
+    @Override
+    public boolean equals(XObject object) {
+        if (object.type == XType.xBool) {
+            return ((XBoolObject)object).value == this.value;
+        }
+        return false;
+    }
 }

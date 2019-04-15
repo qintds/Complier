@@ -27,6 +27,11 @@ public class XClassObject extends XObject{
 
     }
 
+    @Override
+    public boolean equals(XObject object) {
+        return false;
+    }
+
     public XEnv getOriginalEnv() {
         return originalEnv;
     }

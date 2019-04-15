@@ -67,7 +67,7 @@ public enum GrammarEnum {
     ElifStmt_To_IfStmt,
     ElifStmt_To_ElifStmt_Elif_NoAssignExp_CompSt,
     IfElseStmt_To_ElifStmt,
-    IfElseStmt_To_IfElseStmt_Else_CompSt,
+    IfElseStmt_To_ElifStmt_Else_CompSt,
     RepeatStmt_To_Repeat_RepeatCond_CompSt,
     RepeatParam_To_RepeatParam_Comma_Identifier,
     RepeatParam_To_Identifier,
