@@ -1,3 +1,4 @@
+import java.util.HashMap;
 import java.util.Stack;
 
 public class ProgramExecutor {
@@ -8,14 +9,16 @@ public class ProgramExecutor {
     int statusNum = 0;
     int level;
     AssignLeftStruct assignObject;
+    AssignLeftList assignLeftList;
     XObject rightValue;
     XBoolObject TRUE = new XBoolObject(true);
     XBoolObject FALSE = new XBoolObject(false);
-    public ProgramExecutor(CNode root) {
+    public ProgramExecutor(CNode root, HashMap<String, XFuncObject> funcMap, HashMap<String, XClassObject> classMap) {
         this.root = root;
         runEnv = new XEnv(null);
         pointer = root;
         nodeStack = new Stack<>();
+        level = 0;
     }
 
     public int run() {
@@ -77,21 +80,23 @@ public class ProgramExecutor {
     }
 public void	ClassDeclaration	(CNode node)	{
         switch (node.production) {}}
-public void	Super	(CNode node)	{
+    public void	Super	(CNode node)	{
         switch (node.production) {}}
-public void	ClassBody	(CNode node)	{
+    public void	ClassBody	(CNode node)	{
         switch (node.production) {}}
-public void	ClassBodyDeclarations	(CNode node)	{
+    public void	ClassBodyDeclarations	(CNode node)	{
         switch (node.production) {}}
-public void	ClassBodyDeclaration	(CNode node)	{
+    public void	ClassBodyDeclaration	(CNode node)	{
         switch (node.production) {}}
-public void	ClassMemberDeclaration	(CNode node)	{
+    public void	ClassMemberDeclaration	(CNode node)	{
         switch (node.production) {}}
-public void	FuncDeclaration	(CNode node)	{
+    public void	FuncDeclaration	(CNode node)	{
+        switch (node.production) {
+
+        }}
+    public void	ParamList	(CNode node)	{
         switch (node.production) {}}
-public void	ParamList	(CNode node)	{
-        switch (node.production) {}}
-public void	DefaultValue	(CNode node)	{
+    public void	DefaultValue	(CNode node)	{
         switch (node.production) {}}
     public void	Dictionary(CNode node) {
         XDictObject dictObject = new XDictObject();
@@ -235,7 +240,11 @@ public void	DefaultValue	(CNode node)	{
             case CompSt_To_LBrace_RBrace:
                 break;
             case CompSt_To_LBrace_StmtList_RBrace:
+                // add environment
+                XEnv compEnv = new XEnv(runEnv);
+                runEnv = compEnv;
                 StmtList(node.getChild(0));
+                runEnv = runEnv.parent;
                 break;
         }
     }
@@ -262,6 +271,7 @@ public void	DefaultValue	(CNode node)	{
                 IfElseStmt(node.getChild(0));break;
             case Stmt_To_MultiAssignment_LF:
             case Stmt_To_RepeatStmt_LF:
+                RepeatStmt(node.getChild(0));
             case Stmt_To_ReturnStmt_LF:
                 ReturnStmt(node.getChild(0));
         }}
@@ -334,21 +344,57 @@ public void	DefaultValue	(CNode node)	{
         }
     }
     public void	RepeatStmt(CNode node)	{
+        int repeatCount = 0;
         switch (node.production) {
             case RepeatStmt_To_Repeat_RepeatCond_CompSt:
                 CNode cond = node.getChild(0);
-                while (true) {
-                    RepeatCond(cond);
-                    if (cond.production == GrammarEnum.RepeatParam_To_Identifier) {
+                if (cond.production == GrammarEnum.RepeatCond_To_NoAssignExp) {
+                    while (true){
+                        NoAssignExp(cond.getChild(0));
+                        cond.setXObject(cond.getChild(0).getXObject());
+                        if (cond.getXObject() == TRUE) {
+                            CompSt(node.getChild(1));
+                            repeatCount++;
+                        } else break;
+                    }
+                } else if (cond.production == GrammarEnum.RepeatCond_To_RepeatParam_In_IterateValue) {
+                    IterateValue(cond.getChild(1));
+                    XObject iterate = cond.getChild(1).getXObject();
+                    assignLeftList = new AssignLeftList();
+                    RepeatParam(cond.getChild(0));
+                    if (iterate.type == XType.xList || iterate.type == XType.xTuple)
+                    {
+                        XIterable xIterate = (XIterable) iterate;
+                        int maxRepeat = xIterate.length();
+                        while (repeatCount < maxRepeat) {
+                            assignLeftList.assign(xIterate.get(repeatCount));
+                            // add to environment
+                            // ```
+                            CompSt(node.getChild(1));
+                            repeatCount++;
+                        }
 
+
+                    } else {
+                        // not iterable
                     }
                 }
         }}
     public void	RepeatParam(CNode node) {
         switch (node.production) {
             case RepeatParam_To_Identifier:
-
+                assignObject = new AssignLeftStruct();
+                assignObject.setType(AssignableType.single);
+                assignObject.setIdentifier(node.getIdentifier());
+                assignLeftList.addLeft(assignObject);
+                break;
             case RepeatParam_To_RepeatParam_Comma_Identifier:
+                RepeatParam(node.getChild(0));
+                assignObject = new AssignLeftStruct();
+                assignObject.setType(AssignableType.single);
+                assignObject.setIdentifier(node.getChild(1).getIdentifier());
+                assignLeftList.addLeft(assignObject);
+                break;
         }
     }
     public void	IterateValue(CNode node) {
@@ -365,13 +411,11 @@ public void	DefaultValue	(CNode node)	{
         }
         node.setXObject(node.getChild(0).getXObject());
     }
-    public void	RepeatCond(CNode node) {
+    public void	FuncInvocation(CNode node) {
         switch (node.production) {
-            case RepeatCond_To_NoAssignExp:
-            case RepeatCond_To_RepeatParam_In_IterateValue:
-        }}
-public void	FuncInvocation	(CNode node)	{
-        switch (node.production) {}}
+
+        }
+    }
     public void	AssignableValue	(CNode node, boolean assign) {
         switch (node.production) {
             case AssignableValue_To_Identifier:

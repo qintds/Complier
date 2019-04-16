@@ -134,4 +134,16 @@ public class LRStateTableParser {
     private CNode doReduce(int productionNum) {
         return treeBuilder.reduceAction(productionNum);
     }
+
+    public HashMap<String, XFuncObject> getFuncMap() {
+        return treeBuilder.functionMap;
+    }
+
+    public HashMap<String, XClassObject> getClassMap() {
+        return treeBuilder.classMap;
+    }
+
+    public CNode getProgram() {
+        return treeBuilder.program;
+    }
 }

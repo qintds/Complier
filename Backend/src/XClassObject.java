@@ -17,6 +17,11 @@ public class XClassObject extends XObject{
         classBody = cNode;
     }
 
+    public XInstanceObject initial() {
+        XInstanceObject instance = new XInstanceObject(className, originalEnv);
+        return instance;
+    }
+
     @Override
     public void print() {
 

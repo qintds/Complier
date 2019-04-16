@@ -25,8 +25,10 @@ public class Parser {
 
         printCF(lexer.presentFile);
 
-        LRStateTableParser parser = new LRStateTableParser(lexer.presentFile);
-        parser.parse();
+        LRStateTableParser lrParser = new LRStateTableParser(lexer.presentFile);
+        lrParser.parse();
+
+        ProgramExecutor executor = new ProgramExecutor(lrParser.getProgram(), lrParser.getFuncMap(), lrParser.getClassMap());
 
     }
 

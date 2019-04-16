@@ -17,5 +17,6 @@
     <orderEntry type="library" name="Maven: org.bytedeco.javacpp-presets:llvm:windows-x86_64:7.0.1-1.4.4" level="project" />
     <orderEntry type="library" name="Maven: org.bytedeco:javacpp:1.4.4" level="project" />
     <orderEntry type="module" module-name="Backend" />
+    <orderEntry type="module" module-name="Executor" />
   </component>
 </module>

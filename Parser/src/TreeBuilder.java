@@ -9,9 +9,9 @@ public class TreeBuilder{
     private String address = "";
     private Stack<XFuncObject> funcStack = new Stack<>();
     private ArrayList<String> funcAndClassName = new ArrayList<>();
-    private HashMap<String, XFuncObject> functionMap = new HashMap<>();
-    private HashMap<String, XClassObject> classMap = new HashMap<>();
-    private CNode program;
+    public HashMap<String, XFuncObject> functionMap = new HashMap<>();
+    public HashMap<String, XClassObject> classMap = new HashMap<>();
+    public CNode program;
 
 
     public TreeBuilder(Stack<Object> valueStack){
@@ -481,7 +481,7 @@ public class TreeBuilder{
     }
 
     private void recordNormalFunction() {
-        if (funcStack.size() == 1) {
+        if (funcStack.size() > 0) {
             XFuncObject temp = funcStack.pop();
             if (!funcAndClassName.contains(temp.getFuncName())) {
                 functionMap.put(temp.getFuncName(), temp);
@@ -496,15 +496,19 @@ public class TreeBuilder{
 
     private void generateClassEntrance(Word word, CNode funcBody, boolean isInherit) {
         XClassObject newClass = new XClassObject(word, funcBody);
-        newClass.setInherit(isInherit);
-        if (funcStack.size()>0) {
-            for (int i = funcStack.size(); i > 0; i--) {
-                XFuncObject temp = funcStack.get(funcStack.size() - i);
-                newClass.addClassFunction(temp.getFuncName(), temp);
+        if (!funcAndClassName.contains(newClass.getClassName())) {
+            newClass.setInherit(isInherit);
+            if (funcStack.size()>0) {
+                for (int i = funcStack.size(); i > 0; i--) {
+                    XFuncObject temp = funcStack.get(funcStack.size() - i);
+                    newClass.addClassFunction(temp.getFuncName(), temp);
+                }
+                funcStack.clear();
             }
-            funcStack.clear();
+            classMap.put(newClass.getClassName(), newClass);
+        } else {
+            // repeat name
         }
-        classMap.put(newClass.getClassName(), newClass);
     }
 
 }

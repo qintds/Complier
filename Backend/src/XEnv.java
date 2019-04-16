@@ -4,6 +4,8 @@ public class XEnv {
 
     public HashMap<String, XObject> variableMap = new HashMap<>();
     public HashMap<String, XFuncObject> functionMap = new HashMap<>();
+    public HashMap<String, XClassObject> classMap = new HashMap<>();
+
     public int level;
 
     public XEnv parent;
@@ -11,6 +13,12 @@ public class XEnv {
     public XEnv(XEnv env) {
         parent = env;
     }
+
+    public void merge(HashMap<String, XFuncObject> funcMap, HashMap<String, XClassObject> classMap) {
+        functionMap.putAll(funcMap);
+        this.classMap.putAll(classMap);
+    }
+
 
     public XObject getVariable(String identifier) {
         XObject obj = variableMap.get(identifier);
