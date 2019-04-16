@@ -297,7 +297,7 @@ public class TreeBuilder{
             case ReturnParam_To_NoAssignExp:
                 node = singleToSingle();
                 break;
-            case ReturnStmt_To_Return_RepeatParam:
+            case ReturnStmt_To_Return_ReturnParam:
                 node = CNodeFactroy.createCNode(Tag.ReturnStmt);
                 node.addChild((CNode)valueStack.get(valueStack.size() - 1));
                 break;

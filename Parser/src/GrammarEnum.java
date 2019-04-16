@@ -58,7 +58,7 @@ public enum GrammarEnum {
     Stmt_To_ReturnStmt_LF,
     Stmt_To_IfElseStmt_LF,
     Stmt_To_RepeatStmt_LF,
-    ReturnStmt_To_Return_RepeatParam,
+    ReturnStmt_To_Return_ReturnParam,
     ReturnStmt_To_Return,
     ReturnParam_To_NoAssignExp,
     ReturnParam_To_ListAndTuple,

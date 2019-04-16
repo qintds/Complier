@@ -263,11 +263,32 @@ public void	DefaultValue	(CNode node)	{
             case Stmt_To_MultiAssignment_LF:
             case Stmt_To_RepeatStmt_LF:
             case Stmt_To_ReturnStmt_LF:
+                ReturnStmt(node.getChild(0));
         }}
-public void	ReturnStmt	(CNode node)	{
-        switch (node.production) {}}
-public void	ReturnParam	(CNode node)	{
-        switch (node.production) {}}
+    public void	ReturnStmt(CNode node) {
+        switch (node.production) {
+            case ReturnStmt_To_Return:
+                break;
+            case ReturnStmt_To_Return_ReturnParam:
+                ReturnParam(node.getChild(0));
+                node.setXObject(node.getChild(0).getXObject());
+                break;
+        }
+    }
+    public void	ReturnParam(CNode node) {
+        switch (node.production) {
+            case ReturnParam_To_Dictionary:
+                Dictionary(node.getChild(0));
+                break;
+            case ReturnParam_To_ListAndTuple:
+                ListAndTuple(node.getChild(0));
+                break;
+            case ReturnParam_To_NoAssignExp:
+                NoAssignExp(node.getChild(0));
+                break;
+        }
+        node.setXObject(node.getChild(0).getXObject());
+    }
     public void	IfStmt(CNode node) {
         switch (node.production) {
             case IfStmt_To_If_NoAssignExp_CompSt:
@@ -312,14 +333,43 @@ public void	ReturnParam	(CNode node)	{
 
         }
     }
-public void	RepeatStmt	(CNode node)	{
-        switch (node.production) {}}
-public void	RepeatParam	(CNode node)	{
-        switch (node.production) {}}
-public void	IterateValue	(CNode node)	{
-        switch (node.production) {}}
-public void	RepeatCond	(CNode node)	{
-        switch (node.production) {}}
+    public void	RepeatStmt(CNode node)	{
+        switch (node.production) {
+            case RepeatStmt_To_Repeat_RepeatCond_CompSt:
+                CNode cond = node.getChild(0);
+                while (true) {
+                    RepeatCond(cond);
+                    if (cond.production == GrammarEnum.RepeatParam_To_Identifier) {
+
+                    }
+                }
+        }}
+    public void	RepeatParam(CNode node) {
+        switch (node.production) {
+            case RepeatParam_To_Identifier:
+
+            case RepeatParam_To_RepeatParam_Comma_Identifier:
+        }
+    }
+    public void	IterateValue(CNode node) {
+        switch (node.production) {
+            case IterateValue_To_List:
+                List(node.getChild(0));
+                break;
+            case IterateValue_To_Variable:
+                Variable(node.getChild(0));
+                break;
+            case IterateValue_To_Tuple:
+                Tuple(node.getChild(0));
+                break;
+        }
+        node.setXObject(node.getChild(0).getXObject());
+    }
+    public void	RepeatCond(CNode node) {
+        switch (node.production) {
+            case RepeatCond_To_NoAssignExp:
+            case RepeatCond_To_RepeatParam_In_IterateValue:
+        }}
 public void	FuncInvocation	(CNode node)	{
         switch (node.production) {}}
     public void	AssignableValue	(CNode node, boolean assign) {
