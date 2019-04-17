@@ -15,7 +15,7 @@ public class AssignLeftList {
                         assignList.get(i).setValue(valueList.get(i), env);
                     }
                 } else {
-                    //To much value
+                    //To much OR less value
                 }
             } else if (object.type == XType.xTuple) {
                 XTupleObject valueList = (XTupleObject)object;

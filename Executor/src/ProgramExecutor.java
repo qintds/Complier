@@ -338,6 +338,7 @@ public class ProgramExecutor {
                 if (createEnv) {
                     envStack.push(new XEnv(runEnv));
                     runEnv = envStack.peek();
+                    runEnv.envOwner = XEnvOwner.xOther;
                 }
                 StmtList(node.getChild(0));
                 if (createEnv) {
@@ -351,32 +352,63 @@ public class ProgramExecutor {
         switch (node.production) {
             case StmtList_To_Stmt:
                 Stmt(node.getChild(0));
+                if (node.getChild(0).getAlignAction() == AlignAction.xReturn) {
+                    node.xReturn();
+                    return;
+                }
                 break;
             case StmtList_To_StmtList_Stmt:
                 StmtList(node.getChild(0));
+                if (node.getChild(0).getAlignAction() == AlignAction.xReturn) {
+                    node.xReturn();
+                    return;
+                }
                 Stmt(node.getChild(1));
+                if (node.getChild(1).getAlignAction() == AlignAction.xReturn) {
+                    node.xReturn();
+                    return;
+                }
                 break;
         }
     }
     public void	Stmt(CNode node) {
         switch (node.production) {
             case Stmt_To_Break:
+                if (runEnv.envOwner == XEnvOwner.xRepeat) {
+
+                } else {
+                    // no break
+                }
             case Stmt_To_CompSt_LF:
                 CompSt(node.getChild(0), true);break;
             case Stmt_To_Continue:
+                if (runEnv.envOwner == XEnvOwner.xRepeat) {
+
+                } else {
+                    // no continue
+                }
             case Stmt_To_Exp_LF:
                 Exp(node.getChild(0));break;
             case Stmt_To_IfElseStmt_LF:
                 IfElseStmt(node.getChild(0));break;
             case Stmt_To_MultiAssignment_LF:
             case Stmt_To_RepeatStmt_LF:
-                RepeatStmt(node.getChild(0));
+                RepeatStmt(node.getChild(0));break;
             case Stmt_To_ReturnStmt_LF:
-                ReturnStmt(node.getChild(0));
+                if (runEnv.envOwner == XEnvOwner.xNormalFunc || runEnv.envOwner == XEnvOwner.xInstanceFunc){
+                    ReturnStmt(node.getChild(0));
+                    node.setXObject(node.getChild(0).getXObject());
+                    node.xReturn();
+                } else {
+                    // can not return
+                }
+                break;
+
         }}
     public void	ReturnStmt(CNode node) {
         switch (node.production) {
             case ReturnStmt_To_Return:
+                node.setXObject(null);
                 break;
             case ReturnStmt_To_Return_ReturnParam:
                 ReturnParam(node.getChild(0));
@@ -452,7 +484,12 @@ public class ProgramExecutor {
                         NoAssignExp(cond.getChild(0));
                         cond.setXObject(cond.getChild(0).getXObject());
                         if (cond.getXObject() == TRUE) {
-                            CompSt(node.getChild(1), true);
+                            envStack.push(new XEnv(runEnv));
+                            runEnv = envStack.peek();
+                            runEnv.envOwner = XEnvOwner.xRepeat;
+                            CompSt(node.getChild(1), false);
+                            envStack.pop();
+                            runEnv = envStack.peek();
                             repeatCount++;
                         } else break;
                     }
@@ -544,6 +581,7 @@ public class ProgramExecutor {
                             XFuncObject initialFunc = (XFuncObject)xClassObject.getFromInstance(xClassObject.getClassName());
                             envStack.push(initialFunc.getFuncEnv());
                             runEnv = envStack.peek();
+                            runEnv.envOwner = XEnvOwner.xInitialFunc;
                             runEnv.setXObjectByName("self", newInstance);
                             CompSt(initialFunc.getContent(), false);
                             envStack.pop();
@@ -554,7 +592,10 @@ public class ProgramExecutor {
                         envStack.push(xFuncObject.getFuncEnv());
                         runEnv = envStack.peek();
                         if (isInstanceDotInvocation) {
+                            runEnv.envOwner = XEnvOwner.xInstanceFunc;
                             runEnv.setXObjectByName("self", node.getBrother());
+                        } else {
+                            runEnv.envOwner = XEnvOwner.xNormalFunc;
                         }
                         CompSt(xFuncObject.getContent(), false);
                         envStack.pop();
@@ -578,6 +619,7 @@ public class ProgramExecutor {
 
                             envStack.push(initialFunc.getFuncEnv());
                             runEnv = envStack.peek();
+                            runEnv.envOwner = XEnvOwner.xInitialFunc;
                             runEnv.setXObjectByName("self", newInstance);
                             assignLeftList.assign(argTuple, runEnv);
                             CompSt(initialFunc.getContent(), false);
@@ -594,7 +636,10 @@ public class ProgramExecutor {
                         envStack.push(xFuncObject.getFuncEnv());
                         runEnv = envStack.peek();
                         if (isInstanceDotInvocation) {
+                            runEnv.envOwner = XEnvOwner.xInstanceFunc;
                             runEnv.setXObjectByName("self", node.getBrother());
+                        } else {
+                            runEnv.envOwner = XEnvOwner.xNormalFunc;
                         }
                         assignLeftList.assign(argTuple, runEnv);
                         CompSt(xFuncObject.getContent(), false);
@@ -671,11 +716,20 @@ public class ProgramExecutor {
             case Variable_To_AssignableValue:
                 AssignableValue(node.getChild(0), false);
                 node.setXObject(node.getChild(0).getXObject());
+                break;
             case Variable_To_FuncInvocation:
                 FuncInvocation(node.getChild(0));
                 node.setXObject(node.getChild(0).getXObject());
+                break;
             case Variable_To_Variable_Dot_FuncInvocation:
+                Variable(node.getChild(0));
+                node.getChild(1).setBrother(node.getChild(0).getXObject());
+                FuncInvocation(node.getChild(1));
+                node.setXObject(node.getChild(1).getXObject());
+                break;
             case Variable_To_Self:
+                node.setXObject(runEnv.getXObjectByName("self"));
+                break;
         }
     }
     public void	Primary	(CNode node) {

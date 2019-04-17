@@ -9,11 +9,13 @@ public class XEnv {
     public ArrayList<String> funcAndClass = new ArrayList<>();
 
     public int level;
+    public XEnvOwner envOwner;
 
     public XEnv parent;
 
     public XEnv(XEnv env) {
         parent = env;
+        envOwner = XEnvOwner.xOther;
     }
 
     public void merge(HashMap<String, XFuncObject> funcMap, HashMap<String, XClassObject> classMap) {

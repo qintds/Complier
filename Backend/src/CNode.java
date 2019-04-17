@@ -13,6 +13,7 @@ public class CNode {
     private XObject xObject;
     private XObject brother;
     private boolean hasBrother = false;
+    private AlignAction alignAction = AlignAction.xNormal;
 
     public XObject getBrother() {
         return brother;
@@ -96,6 +97,21 @@ public class CNode {
     }
 
 
+    public void xReturn() {
+        alignAction = AlignAction.xReturn;
+    }
+    public void xBreak() {
+        alignAction = AlignAction.xBreak;
+    }
+    public void xContinue() {
+        alignAction = AlignAction.xContinue;
+    }
 
+    public void setBackAlignAction() {
+        alignAction = AlignAction.xNormal;
+    }
 
+    public AlignAction getAlignAction() {
+        return alignAction;
+    }
 }
