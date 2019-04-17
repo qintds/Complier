@@ -3,9 +3,10 @@ public class XInstanceObject extends XObject{
     private XEnv env;
     private String className;
 
-    public XInstanceObject(String className, XEnv env) {
+    public XInstanceObject(String className) {
         super(XType.xInstance);
         this.className = className;
+        env = new XEnv(null);
     }
 
     @Override
@@ -21,5 +22,9 @@ public class XInstanceObject extends XObject{
     @Override
     public boolean equals(XObject object) {
         return false;
+    }
+
+    public String getClassName() {
+        return className;
     }
 }

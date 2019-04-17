@@ -78,6 +78,14 @@ public class CNode {
         return children.get(i);
     }
 
+//    public CNode getFirstChild() {
+//
+//    }
+
+    public CNode getChildFromLast(int i) {
+        return children.get(children.size() - i);
+    }
+
     public void reverseChildren() {
         if (isChildrenReverse == true) {
             return;

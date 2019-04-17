@@ -5,6 +5,8 @@ public class XClassObject extends XObject{
     private String className;
     private CNode classBody;
     private boolean isInherit;
+    private int level;
+    private boolean hasInitial = false;
 
     public void setInherit(boolean inherit) {
         isInherit = inherit;
@@ -18,8 +20,17 @@ public class XClassObject extends XObject{
         classBody = cNode;
     }
 
+    public void setLevel(int i) {
+        level = i;
+    }
+
+    public void setBaseEnv(XEnv p) {
+        originalInstanceEnv.setParent(p);
+        classEnv.setParent(p);
+    }
+
     public XInstanceObject initial() {
-        XInstanceObject instance = new XInstanceObject(className, originalInstanceEnv);
+        XInstanceObject instance = new XInstanceObject(className);
         return instance;
     }
 
@@ -63,10 +74,29 @@ public class XClassObject extends XObject{
     }
 
     public void addInstanceFunction(String identifier, XFuncObject funcObject) {
+        if (identifier == className) {
+            hasInitial = true;
+        }
         originalInstanceEnv.setXObjectByName(identifier, funcObject);
     }
 
     public void addInstanceVariable(String identifier, XObject object) {
+        originalInstanceEnv.setXObjectByName(identifier, object);
+    }
 
+    public XObject getFromClass(String identifier) {
+        return classEnv.getXObjectByName(identifier);
+    }
+
+    public XObject getFromInstance(String identifier) {
+        return originalInstanceEnv.getXObjectByName(identifier);
+    }
+
+    public XEnv getClassEnv() {
+        return classEnv;
+    }
+
+    public boolean isHasInitial(){
+        return hasInitial;
     }
 }

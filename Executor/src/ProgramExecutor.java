@@ -89,6 +89,7 @@ public class ProgramExecutor {
             case ClassDeclaration_To_Class_Identifier_ClassBody:
                 XObject xObject = runEnv.getXObjectByName(node.getChild(0).getIdentifier());
                 if (xObject.type == XType.xClass) {
+                    ((XClassObject)xObject).setBaseEnv(runEnv);
                     node.getChild(1).setBrother(xObject);
                     ClassBody(node.getChild(1));
                 }
@@ -124,8 +125,12 @@ public class ProgramExecutor {
                 ClassMemberDeclaration(node.getChild(0));
                 break;
             case ClassBodyDeclaration_To_ClassFuncDeclaration:
+                node.getChild(0).setBrother(node.getBrother());
+                ClassFuncDeclaration(node.getChild(0));
+                break;
             case ClassBodyDeclaration_To_FuncDeclaration:
-                //do nothing, function will be invoke by other method
+                node.getChild(0).setBrother(node.getBrother());
+                FuncDeclaration(node.getChild(0));
         }
     }
     public void	ClassMemberDeclaration(CNode node) {
@@ -139,17 +144,55 @@ public class ProgramExecutor {
     }
 
     public void ClassFuncDeclaration(CNode node) {
-
+        switch (node.production) {
+            case ClassFuncDeclaration_To_Func_Identifier_LBracket_Self_ParamList_RBracket_CompSt:
+            case ClassFuncDeclaration_To_Func_Identifier_LBracket_Self_RBracket_CompSt:
+                ((XFuncObject)((XClassObject)node.getBrother()).getFromInstance(node.getChild(0).getIdentifier())).setBaseEnv(((XClassObject)node.getBrother()).getClassEnv());
+        }
     }
 
     public void	FuncDeclaration	(CNode node)	{
         switch (node.production) {
+            case FuncDeclaration_To_Func_Identifier_LBracket_ParamList_RBracket_CompSt:
+            case FuncDeclaration_To_Func_Identifier_LBracket_RBracket_CompSt:
+                if (node.hasBrother()) {
+                    ((XFuncObject)((XClassObject)node.getBrother()).getFromClass(node.getChild(0).getIdentifier())).setBaseEnv(((XClassObject)node.getBrother()).getClassEnv());
+                } else {
+                    XObject temp = runEnv.getXObjectByName(node.getChild(0).getIdentifier());
+                    if (temp.type == XType.xFunc) {
+                        ((XFuncObject)temp).setBaseEnv(runEnv);
+                    }
+                }
+        }
+    }
 
-        }}
-    public void	ParamList	(CNode node)	{
-        switch (node.production) {}}
+    public void	ParamList(CNode node) {
+        switch (node.production) {
+            case ParamList_To_Identifier:
+                assignObject = new AssignLeftStruct();
+                assignObject.setType(AssignableType.single);
+                assignObject.setIdentifier(node.getIdentifier());
+                assignLeftList.addLeft(assignObject);
+                break;
+            case ParamList_To_ParamList_Comma_Identifier:
+                ParamList(node.getChild(0));
+                assignObject = new AssignLeftStruct();
+                assignObject.setType(AssignableType.single);
+                assignObject.setIdentifier(node.getChild(1).getIdentifier());
+                assignLeftList.addLeft(assignObject);
+                break;
+            case ParamList_To_Identifier_DefaultValue:
+            case ParamList_To_ParamList_Comma_Identifier_DefaultValue:
+                // implement later, need change the grammar
+        }
+    }
     public void	DefaultValue	(CNode node)	{
-        switch (node.production) {}}
+        switch (node.production) {
+            case DefaultValue_To_Assign_Primary:
+                Primary(node.getChild(0));
+                node.setXObject(node.getChild(0).getXObject());
+        }
+    }
     public void	Dictionary(CNode node) {
         XDictObject dictObject = new XDictObject();
         switch (node.production) {
@@ -293,11 +336,13 @@ public class ProgramExecutor {
                 break;
             case CompSt_To_LBrace_StmtList_RBrace:
                 if (createEnv) {
-                    runEnv = new XEnv(runEnv);
+                    envStack.push(new XEnv(runEnv));
+                    runEnv = envStack.peek();
                 }
                 StmtList(node.getChild(0));
                 if (createEnv) {
-                    runEnv = runEnv.parent;
+                    envStack.pop();
+                    runEnv = envStack.peek();
                 }
                 break;
         }
@@ -421,10 +466,12 @@ public class ProgramExecutor {
                         XIterable xIterate = (XIterable) iterate;
                         int maxRepeat = xIterate.length();
                         while (repeatCount < maxRepeat) {
-                            assignLeftList.assign(xIterate.get(repeatCount));
-                            // add to environment
-                            // ```
+                            envStack.push(new XEnv(runEnv));
+                            runEnv = envStack.peek();
+                            assignLeftList.assign(xIterate.get(repeatCount), runEnv);
                             CompSt(node.getChild(1), false);
+                            envStack.pop();
+                            runEnv = envStack.peek();
                             repeatCount++;
                         }
 
@@ -465,11 +512,105 @@ public class ProgramExecutor {
         }
         node.setXObject(node.getChild(0).getXObject());
     }
-    public void	FuncInvocation(CNode node) {
-        switch (node.production) {
 
+
+
+    public void	FuncInvocation(CNode node) {
+        // func obj
+        XObject object = null;
+        boolean isInstanceDotInvocation = false;
+        if (node.hasBrother()) {
+            XObject brother = node.getBrother();
+            if (brother.type == XType.xClass) {
+                XClassObject xClassObject = (XClassObject)brother;
+                object = xClassObject.getFromClass(node.getChild(0).getIdentifier());
+            } else if (brother.type == XType.xInstance) {
+                isInstanceDotInvocation = true;
+                XInstanceObject xInstanceObject = (XInstanceObject)brother;
+                ((XClassObject)runEnv.getXObjectByName(xInstanceObject.getClassName())).getFromInstance(node.getChild(0).getIdentifier());
+            }
+        } else {
+            object = runEnv.getXObjectByName(node.getChild(0).getIdentifier());
+        }
+
+        if (object.type == XType.xFunc || object.type == XType.xClass) {
+            switch (node.production) {
+                case FuncInvocation_To_Identifier_LBracket_RBracket:
+                    if (object.type == XType.xClass) {
+                        XClassObject xClassObject = (XClassObject)object;
+                        //init
+                        XInstanceObject newInstance = xClassObject.initial();
+                        if (xClassObject.isHasInitial()) {
+                            XFuncObject initialFunc = (XFuncObject)xClassObject.getFromInstance(xClassObject.getClassName());
+                            envStack.push(initialFunc.getFuncEnv());
+                            runEnv = envStack.peek();
+                            runEnv.setXObjectByName("self", newInstance);
+                            CompSt(initialFunc.getContent(), false);
+                            envStack.pop();
+                            runEnv = envStack.peek();
+                        }
+                    } else {
+                        XFuncObject xFuncObject = (XFuncObject)object;
+                        envStack.push(xFuncObject.getFuncEnv());
+                        runEnv = envStack.peek();
+                        if (isInstanceDotInvocation) {
+                            runEnv.setXObjectByName("self", node.getBrother());
+                        }
+                        CompSt(xFuncObject.getContent(), false);
+                        envStack.pop();
+                        runEnv = envStack.peek();
+                    }
+                    break;
+                case FuncInvocation_To_Identifier_LBracket_Args_RBracket:
+                    if (object.type == XType.xClass) {
+                        XClassObject xClassObject = (XClassObject)object;
+                        //init
+                        XInstanceObject newInstance = xClassObject.initial();
+                        if (xClassObject.isHasInitial()) {
+                            XFuncObject initialFunc = (XFuncObject)xClassObject.getFromInstance(xClassObject.getClassName());
+
+                            assignLeftList = new AssignLeftList();
+                            ParamList(initialFunc.getParams());
+
+                            XTupleObject argTuple = new XTupleObject();
+                            node.getChild(1).setBrother(argTuple);
+                            Args(node.getChild(1));
+
+                            envStack.push(initialFunc.getFuncEnv());
+                            runEnv = envStack.peek();
+                            runEnv.setXObjectByName("self", newInstance);
+                            assignLeftList.assign(argTuple, runEnv);
+                            CompSt(initialFunc.getContent(), false);
+                            envStack.pop();
+                            runEnv = envStack.peek();
+                        }
+                    } else {
+                        XFuncObject xFuncObject = (XFuncObject)object;
+                        assignLeftList = new AssignLeftList();
+                        ParamList(xFuncObject.getParams());
+                        XTupleObject argTuple = new XTupleObject();
+                        node.getChild(1).setBrother(argTuple);
+                        Args(node.getChild(1));
+                        envStack.push(xFuncObject.getFuncEnv());
+                        runEnv = envStack.peek();
+                        if (isInstanceDotInvocation) {
+                            runEnv.setXObjectByName("self", node.getBrother());
+                        }
+                        assignLeftList.assign(argTuple, runEnv);
+                        CompSt(xFuncObject.getContent(), false);
+                        envStack.pop();
+                        runEnv = envStack.peek();
+                    }
+
+
+            }
+        } else {
+            // not call able
         }
     }
+
+
+
     public void	AssignableValue	(CNode node, boolean assign) {
         switch (node.production) {
             case AssignableValue_To_Identifier:
@@ -706,6 +847,7 @@ public class ProgramExecutor {
                 rightValue = node.getChild(1).getXObject();
                 assignObject = new AssignLeftStruct();
                 LeftSide(node.getChild(0));
+                node.setXObject(rightValue);
             case Assignment_To_MultiAssignment:
 
         }}
@@ -726,12 +868,25 @@ public class ProgramExecutor {
         switch (node.production) {
             case Exp_To_AssignmentExp:
                 AssignmentExp(node.getChild(0));
+                node.setXObject(node.getChild(0).getXObject());
                 break;
         }
     }
-public void	ArgsName	(CNode node)	{
-        switch (node.production) {}}
-public void	Args(CNode node)	{
-        switch (node.production) {}}
+
+    public void	Args(CNode node) {
+
+        switch (node.production) {
+            case Args_To_Args_Comma_Exp:
+                Args(node.getChild(0));
+                Exp(node.getChild(1));
+                ((XTupleObject)node.getBrother()).initial(node.getChild(1).getXObject());
+                break;
+            case Args_To_Exp:
+                Exp(node.getChild(0));
+                ((XTupleObject)node.getBrother()).initial(node.getChild(0).getXObject());
+//                node.setXObject(node.getChild(0).getXObject());
+                break;
+        }
+    }
 
 }

@@ -47,15 +47,9 @@ public class XEnv {
         return null;
     }
 
-
+    // just cover it
     public void setXObjectByName(String identifier, XObject obj) {
-        // when this env has class or func name, can not cover it
-        if (thisHasFuncOrClass(identifier)) {
-            // repeat name
-        } else {
-            // class or func name inside this env parent can be cover
             variableMap.put(identifier, obj);
-        }
     }
 
     public boolean hasName(String identifier) {
@@ -72,6 +66,12 @@ public class XEnv {
 
     public void setParent(XEnv env) {
         parent = env;
+    }
+
+    public XEnv copy() {
+        XEnv newEnv = new XEnv(this.parent);
+        newEnv.variableMap.putAll(variableMap);
+        return newEnv;
     }
 
 }

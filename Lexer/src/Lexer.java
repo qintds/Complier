@@ -70,6 +70,7 @@ public class Lexer {
         reserve(new Word("none", Tag.None));
         reserve(new Word("null", Tag.Null));
         reserve(new Word("in", Tag.In));
+        reserve(new Word("self", Tag.Self));
 //        reserve(new Word("main", Tag.Main));
         reserve(Word.true_);
         reserve(Word.false_);
