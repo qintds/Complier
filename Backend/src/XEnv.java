@@ -1,10 +1,12 @@
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class XEnv {
 
     public HashMap<String, XObject> variableMap = new HashMap<>();
-    public HashMap<String, XFuncObject> functionMap = new HashMap<>();
-    public HashMap<String, XClassObject> classMap = new HashMap<>();
+    // origin func and class, their name can not be changed
+    public ArrayList<String> funcAndClass = new ArrayList<>();
 
     public int level;
 
@@ -15,15 +17,29 @@ public class XEnv {
     }
 
     public void merge(HashMap<String, XFuncObject> funcMap, HashMap<String, XClassObject> classMap) {
-        functionMap.putAll(funcMap);
-        this.classMap.putAll(classMap);
+        for (Map.Entry<String, XFuncObject> item: funcMap.entrySet()) {
+            if (!variableMap.containsKey(item.getKey())) {
+                variableMap.put(item.getKey(), item.getValue());
+                funcAndClass.add(item.getKey());
+            } else {
+                //repeat
+            }
+        }
+        for (Map.Entry<String, XClassObject> item: classMap.entrySet()) {
+            if (!variableMap.containsKey(item.getKey())) {
+                variableMap.put(item.getKey(), item.getValue());
+                funcAndClass.add(item.getKey());
+            } else {
+                //repeat
+            }
+        }
     }
 
 
-    public XObject getVariable(String identifier) {
+    public XObject getXObjectByName(String identifier) {
         XObject obj = variableMap.get(identifier);
-        if (obj == null) {
-            obj = parent.getVariable(identifier);
+        if (obj == null && parent != null) {
+            obj = parent.getXObjectByName(identifier);
             if (obj == null) {
                 // undefined identifier
             }
@@ -32,16 +48,26 @@ public class XEnv {
     }
 
 
-    public void setVariable(String identifier, XObject obj) {
-        variableMap.put(identifier, obj);
+    public void setXObjectByName(String identifier, XObject obj) {
+        // when this env has class or func name, can not cover it
+        if (thisHasFuncOrClass(identifier)) {
+            // repeat name
+        } else {
+            // class or func name inside this env parent can be cover
+            variableMap.put(identifier, obj);
+        }
     }
 
-    public void setFunction(String identifier, XFuncObject funcObject) {
-        functionMap.put(identifier, funcObject);
+    public boolean hasName(String identifier) {
+        boolean has = variableMap.containsKey(identifier);
+        if (!has && parent != null) {
+            has = parent.hasName(identifier);
+        }
+       return has;
     }
 
-    public boolean hasFunctionDefine(String identifier) {
-        return functionMap.containsKey(identifier);
+    public boolean thisHasFuncOrClass(String identifier) {
+        return funcAndClass.contains(identifier);
     }
 
     public void setParent(XEnv env) {

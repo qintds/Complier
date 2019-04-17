@@ -69,13 +69,20 @@ public class GrammarInitializer {
         generateProduction(Tag.ClassBodyDeclarations, new Tag[]{Tag.ClassBodyDeclarations, Tag.ClassBodyDeclaration}, false);
         generateProduction(Tag.ClassBodyDeclarations, new Tag[]{Tag.ClassBodyDeclaration}, false);
 
-//        ClassBodyDeclaration -> ClassMemberDeclaration
-//                | FuncDeclaration
+//       ClassBodyDeclaration -> ClassMemberDeclaration
+//                       | FuncDeclaration
+//                       | ClassFuncDeclaration
         generateProduction(Tag.ClassBodyDeclaration, new Tag[]{Tag.ClassMemberDeclaration}, false);
         generateProduction(Tag.ClassBodyDeclaration, new Tag[]{Tag.FuncDeclaration}, false);
+        generateProduction(Tag.ClassBodyDeclaration, new Tag[]{Tag.ClassFuncDeclaration}, false);
 
-//        ClassMemberDeclaration -> Assignment
-        generateProduction(Tag.ClassMemberDeclaration, new Tag[]{Tag.Assignment}, false);
+        //ClassFuncDeclaration -> FUNC IDENTIFIER ( SELF , ParamList ) CompSt
+        //ClassFuncDeclaration -> FUNC IDENTIFIER ( SELF ) CompSt
+        generateProduction(Tag.ClassFuncDeclaration, new Tag[]{Tag.Func, Tag.Identifier, Tag.LBracket, Tag.Self, Tag.Comma, Tag.ParamList, Tag.RBracket, Tag.CompSt}, false);
+        generateProduction(Tag.ClassFuncDeclaration, new Tag[]{Tag.Func, Tag.Identifier, Tag.LBracket, Tag.Self, Tag.RBracket, Tag.CompSt}, false);
+
+//        ClassMemberDeclaration -> IDENTIFIER = NoAssignExp
+        generateProduction(Tag.ClassMemberDeclaration, new Tag[]{Tag.Identifier, Tag.Assign, Tag.NoAssignExp}, false);
 
         //FuncDeclaration -> FUNC IDENTIFIER ( ParamList ) CompSt
         //FuncDeclaration -> FUNC IDENTIFIER ( ) CompSt

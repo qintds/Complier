@@ -1,6 +1,7 @@
 public class XClassObject extends XObject{
 
-    private XEnv originalEnv = new XEnv(null);
+    private XEnv originalInstanceEnv = new XEnv(null);
+    private XEnv classEnv = new XEnv(null);
     private String className;
     private CNode classBody;
     private boolean isInherit;
@@ -18,7 +19,7 @@ public class XClassObject extends XObject{
     }
 
     public XInstanceObject initial() {
-        XInstanceObject instance = new XInstanceObject(className, originalEnv);
+        XInstanceObject instance = new XInstanceObject(className, originalInstanceEnv);
         return instance;
     }
 
@@ -37,8 +38,8 @@ public class XClassObject extends XObject{
         return false;
     }
 
-    public XEnv getOriginalEnv() {
-        return originalEnv;
+    public XEnv getOriginalInstanceEnv() {
+        return originalInstanceEnv;
     }
 
     public String getClassName() {
@@ -54,12 +55,18 @@ public class XClassObject extends XObject{
     }
 
     public void addClassFunction(String identifier, XFuncObject funcObject) {
-        if (!originalEnv.hasFunctionDefine(identifier))
-        {
-            originalEnv.setFunction(identifier, funcObject);
-        }
-        else {
-            // error repeat member function
-        }
+        classEnv.setXObjectByName(identifier, funcObject);
+    }
+
+    public void addClassVariable(String identifier, XObject object) {
+        classEnv.setXObjectByName(identifier, object);
+    }
+
+    public void addInstanceFunction(String identifier, XFuncObject funcObject) {
+        originalInstanceEnv.setXObjectByName(identifier, funcObject);
+    }
+
+    public void addInstanceVariable(String identifier, XObject object) {
+
     }
 }

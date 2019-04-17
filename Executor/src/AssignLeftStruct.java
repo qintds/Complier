@@ -22,7 +22,7 @@ public class AssignLeftStruct {
 
     public void setValue(XObject value, XEnv table) {
         if (type == AssignableType.single) {
-            table.setVariable(identifier, value);
+            table.setXObjectByName(identifier, value);
         } else if (type == AssignableType.square) {
             //list or dict
         }

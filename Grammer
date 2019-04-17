@@ -16,10 +16,17 @@ ClassBodyDeclarations -> ClassBodyDeclaration
                        | ClassBodyDeclarations ClassBodyDeclaration
 ClassBodyDeclaration -> ClassMemberDeclaration
                        | FuncDeclaration
-ClassMemberDeclaration -> Assignment
+                       | ClassFuncDeclaration
+ClassMemberDeclaration -> IDENTIFIER = NoAssignExp
+
+
+ClassFuncDeclaration -> FUNC IDENTIFIER ( SELF , ParamList ) CompSt
+ClassFuncDeclaration -> FUNC IDENTIFIER ( SELF ) CompSt
 
 FuncDeclaration -> FUNC IDENTIFIER ( ParamList ) CompSt
 FuncDeclaration -> FUNC IDENTIFIER ( ) CompSt
+
+
 
 ParamList -> IDENTIFIER DefaultValue | ParamList , IDENTIFIER DefaultValue
 ParamList -> IDENTIFIER | ParamList , IDENTIFIER

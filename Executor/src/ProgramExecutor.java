@@ -6,6 +6,7 @@ public class ProgramExecutor {
     XEnv runEnv;
     CNode pointer;
     Stack<CNode> nodeStack;
+    Stack<XEnv> envStack;
     int statusNum = 0;
     int level;
     AssignLeftStruct assignObject;
@@ -13,11 +14,16 @@ public class ProgramExecutor {
     XObject rightValue;
     XBoolObject TRUE = new XBoolObject(true);
     XBoolObject FALSE = new XBoolObject(false);
+
+
     public ProgramExecutor(CNode root, HashMap<String, XFuncObject> funcMap, HashMap<String, XClassObject> classMap) {
         this.root = root;
         runEnv = new XEnv(null);
+        runEnv.merge(funcMap, classMap);
         pointer = root;
         nodeStack = new Stack<>();
+        envStack = new Stack<>();
+        envStack.push(runEnv);
         level = 0;
     }
 
@@ -48,7 +54,7 @@ public class ProgramExecutor {
     public void	ExtDef(CNode node) {
         switch (node.production) {
             case ExtDef_To_ClassDeclaration:
-                ClassDeclaration(node.getChild(0));
+                ClassDeclaration(node.getChild(0), true);
                 break;
             case ExtDef_To_FuncDeclaration:
                 FuncDeclaration(node.getChild(0));
@@ -78,18 +84,64 @@ public class ProgramExecutor {
                 PackageChain(node.getChild(0));
         }
     }
-public void	ClassDeclaration	(CNode node)	{
-        switch (node.production) {}}
+    public void	ClassDeclaration(CNode node, boolean initial) {
+        switch (node.production) {
+            case ClassDeclaration_To_Class_Identifier_ClassBody:
+                XObject xObject = runEnv.getXObjectByName(node.getChild(0).getIdentifier());
+                if (xObject.type == XType.xClass) {
+                    node.getChild(1).setBrother(xObject);
+                    ClassBody(node.getChild(1));
+                }
+
+            case ClassDeclaration_To_Class_Identifier_Colon_Super_ClassBody:
+        }
+    }
     public void	Super	(CNode node)	{
         switch (node.production) {}}
-    public void	ClassBody	(CNode node)	{
-        switch (node.production) {}}
-    public void	ClassBodyDeclarations	(CNode node)	{
-        switch (node.production) {}}
-    public void	ClassBodyDeclaration	(CNode node)	{
-        switch (node.production) {}}
-    public void	ClassMemberDeclaration	(CNode node)	{
-        switch (node.production) {}}
+    public void	ClassBody(CNode node) {
+        switch (node.production) {
+            case ClassBody_To_LBrace_ClassBodyDeclarations_RBrace:
+                node.getChild(0).setBrother(node.getBrother());
+                ClassBodyDeclarations(node.getChild(0));
+        }
+    }
+    public void	ClassBodyDeclarations(CNode node) {
+        node.getChild(0).setBrother(node.getBrother());
+        switch (node.production) {
+            case ClassBodyDeclarations_To_ClassBodyDeclaration:
+                ClassBodyDeclaration(node.getChild(0));
+                break;
+            case ClassBodyDeclarations_To_ClassBodyDeclarations_ClassBodyDeclaration:
+                ClassBodyDeclarations(node.getChild(0));
+                node.getChild(1).setBrother(node.getBrother());
+                ClassBodyDeclaration(node.getChild(1));
+        }
+    }
+    public void	ClassBodyDeclaration(CNode node) {
+        switch (node.production) {
+            case ClassBodyDeclaration_To_ClassMemberDeclaration:
+                node.getChild(0).setBrother(node.getBrother());
+                ClassMemberDeclaration(node.getChild(0));
+                break;
+            case ClassBodyDeclaration_To_ClassFuncDeclaration:
+            case ClassBodyDeclaration_To_FuncDeclaration:
+                //do nothing, function will be invoke by other method
+        }
+    }
+    public void	ClassMemberDeclaration(CNode node) {
+        switch (node.production) {
+            case ClassMemberDeclaration_To_Identifier_Assign_NoAssignExp:
+                node.getChild(0).getIdentifier();
+                // get and set
+                NoAssignExp(node.getChild(1));
+                ((XClassObject)node.getBrother()).addClassVariable(node.getChild(0).getIdentifier(), node.getChild(1).getXObject());
+        }
+    }
+
+    public void ClassFuncDeclaration(CNode node) {
+
+    }
+
     public void	FuncDeclaration	(CNode node)	{
         switch (node.production) {
 
@@ -235,16 +287,18 @@ public void	ClassDeclaration	(CNode node)	{
         }
         node.setXObject(node.getChild(0).getXObject());
     }
-    public void	CompSt(CNode node) {
+    public void	CompSt(CNode node, boolean createEnv) {
         switch (node.production) {
             case CompSt_To_LBrace_RBrace:
                 break;
             case CompSt_To_LBrace_StmtList_RBrace:
-                // add environment
-                XEnv compEnv = new XEnv(runEnv);
-                runEnv = compEnv;
+                if (createEnv) {
+                    runEnv = new XEnv(runEnv);
+                }
                 StmtList(node.getChild(0));
-                runEnv = runEnv.parent;
+                if (createEnv) {
+                    runEnv = runEnv.parent;
+                }
                 break;
         }
     }
@@ -263,7 +317,7 @@ public void	ClassDeclaration	(CNode node)	{
         switch (node.production) {
             case Stmt_To_Break:
             case Stmt_To_CompSt_LF:
-                CompSt(node.getChild(0));break;
+                CompSt(node.getChild(0), true);break;
             case Stmt_To_Continue:
             case Stmt_To_Exp_LF:
                 Exp(node.getChild(0));break;
@@ -304,7 +358,7 @@ public void	ClassDeclaration	(CNode node)	{
             case IfStmt_To_If_NoAssignExp_CompSt:
                 NoAssignExp(node.getChild(0));
                 if (node.getChild(0).getXObject() == TRUE) {
-                    CompSt(node.getChild(1));
+                    CompSt(node.getChild(1), true);
                 }
                 node.setXObject(node.getChild(0).getXObject());
         }
@@ -320,7 +374,7 @@ public void	ClassDeclaration	(CNode node)	{
                 if (node.getChild(0).getXObject() == FALSE) {
                     NoAssignExp(node.getChild(1));
                     if (node.getChild(1).getXObject() == TRUE) {
-                        CompSt(node.getChild(2));
+                        CompSt(node.getChild(2), true);
                     }
                     node.setXObject(node.getChild(1).getXObject());
                 } else {
@@ -337,7 +391,7 @@ public void	ClassDeclaration	(CNode node)	{
             case IfElseStmt_To_ElifStmt_Else_CompSt:
                 ElifStmt(node.getChild(0));
                 if (node.getChild(0).getXObject() == FALSE) {
-                    CompSt(node.getChild(1));
+                    CompSt(node.getChild(1), true);
                 }
                 break;
 
@@ -353,7 +407,7 @@ public void	ClassDeclaration	(CNode node)	{
                         NoAssignExp(cond.getChild(0));
                         cond.setXObject(cond.getChild(0).getXObject());
                         if (cond.getXObject() == TRUE) {
-                            CompSt(node.getChild(1));
+                            CompSt(node.getChild(1), true);
                             repeatCount++;
                         } else break;
                     }
@@ -370,7 +424,7 @@ public void	ClassDeclaration	(CNode node)	{
                             assignLeftList.assign(xIterate.get(repeatCount));
                             // add to environment
                             // ```
-                            CompSt(node.getChild(1));
+                            CompSt(node.getChild(1), false);
                             repeatCount++;
                         }
 
@@ -428,7 +482,7 @@ public void	ClassDeclaration	(CNode node)	{
                         assignObject.setValue(rightValue, runEnv);
                     }
                 } else {
-                    node.setXObject(runEnv.getVariable(node.getIdentifier()));
+                    node.setXObject(runEnv.getXObjectByName(node.getIdentifier()));
                 }
             case AssignableValue_To_Variable_Dot_AssignableValue:
                 Variable(node.getChild(0));

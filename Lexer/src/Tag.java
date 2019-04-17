@@ -79,6 +79,7 @@ public enum Tag {
         ClassBodyDeclarations,
         ClassBodyDeclaration,
         ClassMemberDeclaration,
+        ClassFuncDeclaration,
         FuncDeclaration,
         ParamListOpt,
         ParamList,
