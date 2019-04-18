@@ -49,9 +49,29 @@ public class XEnv {
         return null;
     }
 
+    public XObject getXObjectByNameQualify(String identifier) {
+        return variableMap.get(identifier);
+    }
+
+    public boolean hasNameQualify(String identifier) {
+        return variableMap.containsKey(identifier);
+    }
+
     // just cover it
     public void setXObjectByName(String identifier, XObject obj) {
+        if (!hasName(identifier)) {
+            // never use this name
             variableMap.put(identifier, obj);
+        } else if (hasNameQualify(identifier)) {
+            // already use this name, and this env own this name
+            variableMap.put(identifier, obj);
+        } else if (parent != null) {
+            parent.setXObjectByName(identifier, obj);
+        }
+    }
+
+    public void setXObjectByNameQualify(String identifier, XObject obj) {
+        variableMap.put(identifier, obj);
     }
 
     public boolean hasName(String identifier) {
@@ -61,6 +81,7 @@ public class XEnv {
         }
        return has;
     }
+
 
     public boolean thisHasFuncOrClass(String identifier) {
         return funcAndClass.contains(identifier);

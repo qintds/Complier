@@ -1,3 +1,3 @@
 public enum AssignableType {
-    single, square
+    single, square, dot
 }

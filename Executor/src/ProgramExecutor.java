@@ -345,29 +345,32 @@ public class ProgramExecutor {
                     envStack.pop();
                     runEnv = envStack.peek();
                 }
+                if (returnAction(node, 0)) return;
                 break;
         }
     }
+
+    public boolean returnAction(CNode node, int child) {
+        if (node.getChild(child).getAlignAction() == AlignAction.xReturn) {
+            node.xReturn();
+            node.getChild(child).setBackAlignAction();
+            node.setXObject(node.getChild(child).getXObject());
+            return true;
+        }
+        return false;
+    }
+
     public void	StmtList(CNode node) {
         switch (node.production) {
             case StmtList_To_Stmt:
                 Stmt(node.getChild(0));
-                if (node.getChild(0).getAlignAction() == AlignAction.xReturn) {
-                    node.xReturn();
-                    return;
-                }
+                if (returnAction(node, 0)) return;
                 break;
             case StmtList_To_StmtList_Stmt:
                 StmtList(node.getChild(0));
-                if (node.getChild(0).getAlignAction() == AlignAction.xReturn) {
-                    node.xReturn();
-                    return;
-                }
+                if (returnAction(node, 0)) return;
                 Stmt(node.getChild(1));
-                if (node.getChild(1).getAlignAction() == AlignAction.xReturn) {
-                    node.xReturn();
-                    return;
-                }
+                if (returnAction(node, 1)) return;
                 break;
         }
     }
@@ -375,18 +378,20 @@ public class ProgramExecutor {
         switch (node.production) {
             case Stmt_To_Break:
                 if (runEnv.envOwner == XEnvOwner.xRepeat) {
-
+                    node.xBreak();
                 } else {
                     // no break
                 }
+                break;
             case Stmt_To_CompSt_LF:
                 CompSt(node.getChild(0), true);break;
             case Stmt_To_Continue:
                 if (runEnv.envOwner == XEnvOwner.xRepeat) {
-
+                    node.xContinue();
                 } else {
                     // no continue
                 }
+                break;
             case Stmt_To_Exp_LF:
                 Exp(node.getChild(0));break;
             case Stmt_To_IfElseStmt_LF:
@@ -586,6 +591,7 @@ public class ProgramExecutor {
                             CompSt(initialFunc.getContent(), false);
                             envStack.pop();
                             runEnv = envStack.peek();
+                            node.setXObject(newInstance);
                         }
                     } else {
                         XFuncObject xFuncObject = (XFuncObject)object;
@@ -600,6 +606,7 @@ public class ProgramExecutor {
                         CompSt(xFuncObject.getContent(), false);
                         envStack.pop();
                         runEnv = envStack.peek();
+                        node.setXObject(xFuncObject.getContent().getXObject());
                     }
                     break;
                 case FuncInvocation_To_Identifier_LBracket_Args_RBracket:
@@ -625,6 +632,7 @@ public class ProgramExecutor {
                             CompSt(initialFunc.getContent(), false);
                             envStack.pop();
                             runEnv = envStack.peek();
+                            node.setXObject(newInstance);
                         }
                     } else {
                         XFuncObject xFuncObject = (XFuncObject)object;
@@ -645,6 +653,7 @@ public class ProgramExecutor {
                         CompSt(xFuncObject.getContent(), false);
                         envStack.pop();
                         runEnv = envStack.peek();
+                        node.setXObject(xFuncObject.getContent().getXObject());
                     }
 
 
@@ -668,7 +677,11 @@ public class ProgramExecutor {
                         assignObject.setValue(rightValue, runEnv);
                     }
                 } else {
-                    node.setXObject(runEnv.getXObjectByName(node.getIdentifier()));
+                    if (node.hasBrother()) {
+
+                    } else {
+                        node.setXObject(runEnv.getXObjectByName(node.getIdentifier()));
+                    }
                 }
             case AssignableValue_To_Variable_Dot_AssignableValue:
                 Variable(node.getChild(0));

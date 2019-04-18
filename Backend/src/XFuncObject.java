@@ -4,6 +4,7 @@ public class XFuncObject extends XObject {
     private String funcName;
     private boolean containParams = false;
     private int level;
+    public boolean isOriginal;
 
 
     public XFuncObject(Word word, CNode body) {

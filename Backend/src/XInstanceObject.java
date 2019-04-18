@@ -27,4 +27,13 @@ public class XInstanceObject extends XObject{
     public String getClassName() {
         return className;
     }
+
+    public XObject getInstanceMember(String identifier) {
+        return env.getXObjectByNameQualify(identifier);
+    }
+
+
+    public void setInstanceMember(String identifier, XObject object) {
+        env.setXObjectByName(identifier, object);
+    }
 }
