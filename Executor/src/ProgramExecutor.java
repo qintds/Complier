@@ -526,7 +526,7 @@ public class ProgramExecutor {
                     if (iterate.type == XType.xList || iterate.type == XType.xTuple)
                     {
                         XIterable xIterate = (XIterable) iterate;
-                        int maxRepeat = xIterate.length();
+                        int maxRepeat = xIterate.size();
                         while (repeatCount < maxRepeat) {
                             envStack.push(new XEnv(runEnv));
                             runEnv = envStack.peek();

@@ -4,5 +4,5 @@ public interface XIterable {
     XObject get(XNumObject i);
     int clear();
     XObject clone();
-    int length();
+    int size();
 }

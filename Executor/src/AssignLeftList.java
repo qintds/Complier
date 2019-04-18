@@ -10,7 +10,7 @@ public class AssignLeftList {
         if (length() > 1) {
             if (object.type == XType.xList) {
                 XListObject valueList = (XListObject)object;
-                if (valueList.length() == length()) {
+                if (valueList.size() == length()) {
                     for (int i = 0; i < length(); i++) {
                         assignList.get(i).setValue(valueList.get(i), env);
                     }
@@ -19,7 +19,7 @@ public class AssignLeftList {
                 }
             } else if (object.type == XType.xTuple) {
                 XTupleObject valueList = (XTupleObject)object;
-                if (valueList.length() == length()) {
+                if (valueList.size() == length()) {
                     for (int i = 0; i < length(); i++) {
                         assignList.get(i).setValue(valueList.get(i), env);
                     }

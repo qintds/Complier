@@ -59,7 +59,7 @@ public class XTupleObject extends XObject implements XIterable {
     }
 
     @Override
-    public int length() {
-        return 0;
+    public int size() {
+        return list.size();
     }
 }

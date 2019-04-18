@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.List;
 
 public class XListObject extends XObject implements XIterable {
 
@@ -51,8 +52,8 @@ public class XListObject extends XObject implements XIterable {
     }
 
     @Override
-    public int length() {
-        return 0;
+    public int size() {
+        return list.size();
     }
 
     @Override

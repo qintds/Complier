@@ -90,7 +90,7 @@ public class LRStateTableParser {
                 Production production = ProductionManager.getInstance().getProductionByIndex(reduceProductionNum);
                 CNode reduceResult = doReduce(reduceProductionNum);
 
-                // pop the length of the production
+                // pop the size of the production
                 int rightSize = production.right.size();
                 while (rightSize > 0) {
                     parseStack.pop();

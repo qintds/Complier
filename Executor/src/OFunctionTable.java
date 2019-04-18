@@ -15,7 +15,14 @@ public class OFunctionTable {
     }
 
     public void callOriginalFunc(String funcName, XObject args) {
-
+        switch (funcName) {
+            case "print":
+                OFunction.print(args);
+            case "println":
+                OFunction.println(args);
+            case "type":
+                OFunction.printType(args);
+        }
     }
 
 }
