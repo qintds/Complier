@@ -20,11 +20,25 @@ public class AssignLeftStruct {
         key = b;
     }
 
+    public void setDot(XObject a) {
+        base = a;
+    }
+
     public void setValue(XObject value, XEnv table) {
         if (type == AssignableType.single) {
             table.setXObjectByName(identifier, value);
         } else if (type == AssignableType.square) {
-            //list or dict
+            if (base.type == XType.xDict) {
+                ((XDictObject)base).put(key, value);
+            } else if (base.type == XType.xList) {
+                if (key.type == XType.xNum) {
+                    ((XListObject)base).set((XNumObject) key, value);
+                } else {
+                    // can not get by key
+                }
+            }
+        } else if (type == AssignableType.dot) {
+            base.setInstanceMember(identifier, value);
         }
     }
 

@@ -1,7 +1,6 @@
 public class XClassObject extends XObject{
 
     private XEnv originalInstanceEnv = new XEnv(null);
-    private XEnv classEnv = new XEnv(null);
     private String className;
     private CNode classBody;
     private boolean isInherit;
@@ -18,6 +17,7 @@ public class XClassObject extends XObject{
             className = word.toString();
         }
         classBody = cNode;
+
     }
 
     public void setLevel(int i) {
@@ -26,7 +26,7 @@ public class XClassObject extends XObject{
 
     public void setBaseEnv(XEnv p) {
         originalInstanceEnv.setParent(p);
-        classEnv.setParent(p);
+        env.setParent(p);
     }
 
     public XInstanceObject initial() {
@@ -66,18 +66,18 @@ public class XClassObject extends XObject{
     }
 
     public void addClassFunction(String identifier, XFuncObject funcObject) {
-        classEnv.setXObjectByName(identifier, funcObject);
+        env.setXObjectByNameQualify(identifier, funcObject);
     }
 
     public void addClassVariable(String identifier, XObject object) {
-        classEnv.setXObjectByName(identifier, object);
+        env.setXObjectByNameQualify(identifier, object);
     }
 
     public void addInstanceFunction(String identifier, XFuncObject funcObject) {
         if (identifier == className) {
             hasInitial = true;
         }
-        originalInstanceEnv.setXObjectByName(identifier, funcObject);
+        originalInstanceEnv.setXObjectByNameQualify(identifier, funcObject);
     }
 
     public void addInstanceVariable(String identifier, XObject object) {
@@ -85,15 +85,15 @@ public class XClassObject extends XObject{
     }
 
     public XObject getFromClass(String identifier) {
-        return classEnv.getXObjectByName(identifier);
+        return env.getXObjectByNameQualify(identifier);
     }
 
     public XObject getFromInstance(String identifier) {
-        return originalInstanceEnv.getXObjectByName(identifier);
+        return originalInstanceEnv.getXObjectByNameQualify(identifier);
     }
 
     public XEnv getClassEnv() {
-        return classEnv;
+        return env;
     }
 
     public boolean isHasInitial(){

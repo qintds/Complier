@@ -12,6 +12,19 @@ public class Parser {
         }
     }
 
+    public static XEnv importFile(String  filename) {
+        Lexer lexer = new Lexer(filename);
+        lexer.run();
+
+        printCF(lexer.presentFile);
+
+        LRStateTableParser lrParser = new LRStateTableParser(lexer.presentFile);
+        lrParser.parse();
+
+        ProgramExecutor executor = new ProgramExecutor(lrParser.getProgram(), lrParser.getFuncMap(), lrParser.getClassMap());
+        return executor.runEnv;
+    }
+
     public static void main(String[] args) {
         ProductionManager productionManager = ProductionManager.getInstance();
         System.out.println(GrammarInitializer.getInstance().productionNum);

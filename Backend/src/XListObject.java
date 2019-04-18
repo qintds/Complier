@@ -13,18 +13,30 @@ public class XListObject extends XObject implements XIterable {
         list.add(object);
     }
 
+    public void set(int i, XObject object) {
+        list.set(i, object);
+    }
+
+    public void set(XNumObject i, XObject object) {
+        list.set(i.value, object);
+    }
+
+
     @Override
     public XObject get(int i) {
-        return null;
+        return list.get(i);
     }
 
     @Override
+    public XObject get(XNumObject i) {
+        return list.get(i.value);
+    }
+
     public int remove(int i) {
         return 0;
     }
 
-    @Override
-    public int remove(XObject object) {
+    public int remove(XNumObject i) {
         return 0;
     }
 

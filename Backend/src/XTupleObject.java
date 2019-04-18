@@ -40,17 +40,12 @@ public class XTupleObject extends XObject implements XIterable {
 
     @Override
     public XObject get(int i) {
-        return null;
+        return list.get(i);
     }
 
     @Override
-    public int remove(int i) {
-        return 0;
-    }
-
-    @Override
-    public int remove(XObject object) {
-        return 0;
+    public XObject get(XNumObject i) {
+        return list.get(i.value);
     }
 
     @Override

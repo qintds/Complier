@@ -18,22 +18,26 @@ public class XEnv {
         envOwner = XEnvOwner.xOther;
     }
 
+    public void merge(XEnv env) {
+        variableMap.putAll(env.variableMap);
+    }
+
     public void merge(HashMap<String, XFuncObject> funcMap, HashMap<String, XClassObject> classMap) {
         for (Map.Entry<String, XFuncObject> item: funcMap.entrySet()) {
-            if (!variableMap.containsKey(item.getKey())) {
+//            if (!variableMap.containsKey(item.getKey())) {
                 variableMap.put(item.getKey(), item.getValue());
-                funcAndClass.add(item.getKey());
-            } else {
+//                funcAndClass.add(item.getKey());
+//            } else {
                 //repeat
-            }
+//            }
         }
         for (Map.Entry<String, XClassObject> item: classMap.entrySet()) {
-            if (!variableMap.containsKey(item.getKey())) {
+//            if (!variableMap.containsKey(item.getKey())) {
                 variableMap.put(item.getKey(), item.getValue());
-                funcAndClass.add(item.getKey());
-            } else {
+//                funcAndClass.add(item.getKey());
+//            } else {
                 //repeat
-            }
+//            }
         }
     }
 

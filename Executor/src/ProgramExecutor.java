@@ -72,14 +72,27 @@ public class ProgramExecutor {
     public void	ImportDeclaration(CNode node) {
         switch (node.production) {
             case ImportDeclaration_To_Import_PackageChain:
-                PackageChain(node.getChild(0));
+                XEnv temp = PackageChainImport(node.getChild(0));
+                runEnv.merge(temp);
         }
+    }
+
+    public XEnv	PackageChainImport(CNode node) {
+        switch (node.production) {
+            case PackageChain_To_Identifier:
+                return Parser.importFile(node.getChild(0).getIdentifier());
+            case PackageChain_To_PackageChain_Dot_Identifier:
+                XEnv temp = PackageChainImport(node.getChild(0));
+                return temp.getXObjectByNameQualify(node.getChild(1).getIdentifier()).env;
+        }
+        return null;
     }
 
     // find path
     public void	PackageChain(CNode node) {
         switch (node.production) {
             case PackageChain_To_Identifier:
+                node.getChild(0).getIdentifier();
             case PackageChain_To_PackageChain_Dot_Identifier:
                 PackageChain(node.getChild(0));
         }
@@ -93,12 +106,16 @@ public class ProgramExecutor {
                     node.getChild(1).setBrother(xObject);
                     ClassBody(node.getChild(1));
                 }
-
+                break;
             case ClassDeclaration_To_Class_Identifier_Colon_Super_ClassBody:
         }
     }
-    public void	Super	(CNode node)	{
-        switch (node.production) {}}
+    public void	Super(CNode node) {
+        switch (node.production) {
+
+        }
+    }
+
     public void	ClassBody(CNode node) {
         switch (node.production) {
             case ClassBody_To_LBrace_ClassBodyDeclarations_RBrace:
@@ -147,7 +164,9 @@ public class ProgramExecutor {
         switch (node.production) {
             case ClassFuncDeclaration_To_Func_Identifier_LBracket_Self_ParamList_RBracket_CompSt:
             case ClassFuncDeclaration_To_Func_Identifier_LBracket_Self_RBracket_CompSt:
-                ((XFuncObject)((XClassObject)node.getBrother()).getFromInstance(node.getChild(0).getIdentifier())).setBaseEnv(((XClassObject)node.getBrother()).getClassEnv());
+                // set lexical env for class
+//                ((XFuncObject)((XClassObject)node.getBrother()).getFromInstance(node.getChild(0).getIdentifier())).setBaseEnv(((XClassObject)node.getBrother()).getClassEnv());
+                ((XFuncObject)((XClassObject)node.getBrother()).getFromInstance(node.getChild(0).getIdentifier())).setBaseEnv(runEnv);
         }
     }
 
@@ -156,7 +175,8 @@ public class ProgramExecutor {
             case FuncDeclaration_To_Func_Identifier_LBracket_ParamList_RBracket_CompSt:
             case FuncDeclaration_To_Func_Identifier_LBracket_RBracket_CompSt:
                 if (node.hasBrother()) {
-                    ((XFuncObject)((XClassObject)node.getBrother()).getFromClass(node.getChild(0).getIdentifier())).setBaseEnv(((XClassObject)node.getBrother()).getClassEnv());
+//                    ((XFuncObject)((XClassObject)node.getBrother()).getFromClass(node.getChild(0).getIdentifier())).setBaseEnv(((XClassObject)node.getBrother()).getClassEnv());
+                    ((XFuncObject)((XClassObject)node.getBrother()).getFromClass(node.getChild(0).getIdentifier())).setBaseEnv(runEnv);
                 } else {
                     XObject temp = runEnv.getXObjectByName(node.getChild(0).getIdentifier());
                     if (temp.type == XType.xFunc) {
@@ -595,18 +615,22 @@ public class ProgramExecutor {
                         }
                     } else {
                         XFuncObject xFuncObject = (XFuncObject)object;
-                        envStack.push(xFuncObject.getFuncEnv());
-                        runEnv = envStack.peek();
-                        if (isInstanceDotInvocation) {
-                            runEnv.envOwner = XEnvOwner.xInstanceFunc;
-                            runEnv.setXObjectByName("self", node.getBrother());
+                        if (xFuncObject.isOriginal) {
+                            OFunctionTable.getInstance().callOriginalFunc(xFuncObject.getFuncName(), null);
                         } else {
-                            runEnv.envOwner = XEnvOwner.xNormalFunc;
+                            envStack.push(xFuncObject.getFuncEnv());
+                            runEnv = envStack.peek();
+                            if (isInstanceDotInvocation) {
+                                runEnv.envOwner = XEnvOwner.xInstanceFunc;
+                                runEnv.setXObjectByName("self", node.getBrother());
+                            } else {
+                                runEnv.envOwner = XEnvOwner.xNormalFunc;
+                            }
+                            CompSt(xFuncObject.getContent(), false);
+                            envStack.pop();
+                            runEnv = envStack.peek();
+                            node.setXObject(xFuncObject.getContent().getXObject());
                         }
-                        CompSt(xFuncObject.getContent(), false);
-                        envStack.pop();
-                        runEnv = envStack.peek();
-                        node.setXObject(xFuncObject.getContent().getXObject());
                     }
                     break;
                 case FuncInvocation_To_Identifier_LBracket_Args_RBracket:
@@ -636,24 +660,31 @@ public class ProgramExecutor {
                         }
                     } else {
                         XFuncObject xFuncObject = (XFuncObject)object;
-                        assignLeftList = new AssignLeftList();
-                        ParamList(xFuncObject.getParams());
-                        XTupleObject argTuple = new XTupleObject();
-                        node.getChild(1).setBrother(argTuple);
-                        Args(node.getChild(1));
-                        envStack.push(xFuncObject.getFuncEnv());
-                        runEnv = envStack.peek();
-                        if (isInstanceDotInvocation) {
-                            runEnv.envOwner = XEnvOwner.xInstanceFunc;
-                            runEnv.setXObjectByName("self", node.getBrother());
+                        if (xFuncObject.isOriginal) {
+                            XTupleObject argTuple = new XTupleObject();
+                            node.getChild(1).setBrother(argTuple);
+                            Args(node.getChild(1));
+                            OFunctionTable.getInstance().callOriginalFunc(xFuncObject.getFuncName(), argTuple);
                         } else {
-                            runEnv.envOwner = XEnvOwner.xNormalFunc;
+                            assignLeftList = new AssignLeftList();
+                            ParamList(xFuncObject.getParams());
+                            XTupleObject argTuple = new XTupleObject();
+                            node.getChild(1).setBrother(argTuple);
+                            Args(node.getChild(1));
+                            envStack.push(xFuncObject.getFuncEnv());
+                            runEnv = envStack.peek();
+                            if (isInstanceDotInvocation) {
+                                runEnv.envOwner = XEnvOwner.xInstanceFunc;
+                                runEnv.setXObjectByName("self", node.getBrother());
+                            } else {
+                                runEnv.envOwner = XEnvOwner.xNormalFunc;
+                            }
+                            assignLeftList.assign(argTuple, runEnv);
+                            CompSt(xFuncObject.getContent(), false);
+                            envStack.pop();
+                            runEnv = envStack.peek();
+                            node.setXObject(xFuncObject.getContent().getXObject());
                         }
-                        assignLeftList.assign(argTuple, runEnv);
-                        CompSt(xFuncObject.getContent(), false);
-                        envStack.pop();
-                        runEnv = envStack.peek();
-                        node.setXObject(xFuncObject.getContent().getXObject());
                     }
 
 
@@ -663,22 +694,48 @@ public class ProgramExecutor {
         }
     }
 
-
+    // Variable [ Variable ]
+    // Variable [ STRING ]
+    // Variable [ NUM ]
+    // Variable [ NoAssignExp ]
+    public void assignListOrDict(CNode node, boolean assign) {
+        if (assign) {
+            assignObject.setType(AssignableType.square);
+            assignObject.setSquare(node.getChild(0).getXObject(),node.getChild(1).getXObject());
+            assignObject.setValue(rightValue, runEnv);
+        } else {
+            XObject temp = node.getChild(0).getXObject();
+            XObject key = node.getChild(1).getXObject();
+            if (temp.type == XType.xList || temp.type == XType.xTuple) {
+                if (key.type == XType.xNum) {
+                    node.setXObject(((XIterable)temp).get((XNumObject)key));
+                } else {
+                    // iterable value can not deal with key
+                }
+            } else if (temp.type == XType.xDict) {
+                node.setXObject(((XDictObject)temp).get(key));
+            }
+        }
+    }
 
     public void	AssignableValue	(CNode node, boolean assign) {
         switch (node.production) {
             case AssignableValue_To_Identifier:
                 if (assign) {
-                    assignObject.setType(AssignableType.single);
-                    assignObject.setIdentifier(node.getIdentifier());
                     if (node.hasBrother()) {
-//                        assignObject.setValue(node.getBrother());
+                        assignObject.setType(AssignableType.dot);
+                        assignObject.setIdentifier(node.getIdentifier());
+                        assignObject.setDot(node.getBrother());
+                        // runEnv is meaningless
+                        assignObject.setValue(rightValue, runEnv);
                     } else {
+                        assignObject.setType(AssignableType.single);
+                        assignObject.setIdentifier(node.getIdentifier());
                         assignObject.setValue(rightValue, runEnv);
                     }
                 } else {
                     if (node.hasBrother()) {
-
+                        node.setXObject(node.getBrother().getInstanceMember(node.getIdentifier()));
                     } else {
                         node.setXObject(runEnv.getXObjectByName(node.getIdentifier()));
                     }
@@ -691,42 +748,32 @@ public class ProgramExecutor {
                 break;
             case AssignableValue_To_Variable_LSquare_Num_RSquare:
             case AssignableValue_To_Variable_LSquare_String_RSquare:
+                if (node.hasBrother())
+                    node.getChild(0).setBrother(node.getBrother());
                 Variable(node.getChild(0));
-                if (assign) {
-                    assignObject.setType(AssignableType.square);
-                    assignObject.setSquare(node.getChild(0).getXObject(), node.getChild(1).getXObject());
-                    assignObject.setValue(rightValue, runEnv);
-                } else {
-                    // list or dict
-                }
+                assignListOrDict(node, assign);
                 break;
             case AssignableValue_To_Variable_LSquare_NoAssignExp_RSquare:
+                if (node.hasBrother())
+                    node.getChild(0).setBrother(node.getBrother());
                 Variable(node.getChild(0));
                 NoAssignExp(node.getChild(1));
-                if (assign) {
-                    assignObject.setType(AssignableType.square);
-                    assignObject.setSquare(node.getChild(0).getXObject(), node.getChild(1).getXObject());
-                    assignObject.setValue(rightValue, runEnv);
-                } else {
-                    // list or dict
-                }
+                assignListOrDict(node, assign);
                 break;
             case AssignableValue_To_Variable_LSquare_Variable_RSquare:
+                if (node.hasBrother())
+                    node.getChild(0).setBrother(node.getBrother());
                 Variable(node.getChild(0));
                 Variable(node.getChild(1));
-                if (assign) {
-                    assignObject.setType(AssignableType.square);
-                    assignObject.setSquare(node.getChild(0).getXObject(), node.getChild(1).getXObject());
-                    assignObject.setValue(rightValue, runEnv);
-                } else {
-                    // list or dict
-                }
+                assignListOrDict(node, assign);
                 break;
         }
     }
     public void	Variable(CNode node) {
         switch (node.production) {
             case Variable_To_AssignableValue:
+                if (node.hasBrother())
+                    node.getChild(0).setBrother(node.getBrother());
                 AssignableValue(node.getChild(0), false);
                 node.setXObject(node.getChild(0).getXObject());
                 break;
@@ -915,7 +962,22 @@ public class ProgramExecutor {
                 assignObject = new AssignLeftStruct();
                 LeftSide(node.getChild(0));
                 node.setXObject(rightValue);
-            case Assignment_To_MultiAssignment:
+                break;
+            case Assignment_To_LeftSide_Assign_Dictionary:
+                Dictionary(node.getChild(1));
+                rightValue = node.getChild(1).getXObject();
+                assignLeftList = new AssignLeftList();
+                LeftSide(node.getChild(0));
+                node.setXObject(rightValue);
+                break;
+            case Assignment_To_LeftSide_Assign_ListAndTuple:
+                ListAndTuple(node.getChild(1));
+                Dictionary(node.getChild(1));
+                rightValue = node.getChild(1).getXObject();
+                assignLeftList = new AssignLeftList();
+                LeftSide(node.getChild(0));
+                node.setXObject(rightValue);
+                break;
 
         }}
     public void	LeftSide(CNode node){
@@ -923,13 +985,16 @@ public class ProgramExecutor {
             case LeftSide_To_AssignableValue:
                 AssignableValue(node.getChild(0), true);
             case LeftSide_To_ListAndTuple:
+                if (rightValue.type == XType.xTuple || rightValue.type == XType.xList)
+                    ListAndTupleAssign(node.getChild(0));
+                else {
+                    // type can not assign to left
+                }
         }
     }
 
-    public void	MultiAssignment(CNode node)	{
-        switch (node.production) {
+    public void ListAndTupleAssign(CNode node) {
 
-        }
     }
     public void	Exp	(CNode node){
         switch (node.production) {
@@ -944,6 +1009,7 @@ public class ProgramExecutor {
 
         switch (node.production) {
             case Args_To_Args_Comma_Exp:
+                node.getChild(0).setBrother(node.getBrother());
                 Args(node.getChild(0));
                 Exp(node.getChild(1));
                 ((XTupleObject)node.getBrother()).initial(node.getChild(1).getXObject());

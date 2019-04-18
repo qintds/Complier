@@ -300,20 +300,16 @@ public class GrammarInitializer {
         generateProduction(Tag.AssignmentExp, new Tag[]{Tag.Assignment}, false);
 
 //        Assignment -> LeftSide = AssignmentExp
-//                | MultiAssignment
+//            | LeftSide = ListAndTuple
+//            | LeftSide = Dictionary
         generateProduction(Tag.Assignment, new Tag[]{Tag.LeftSide, Tag.Assign, Tag.AssignmentExp}, false);
-        generateProduction(Tag.Assignment, new Tag[]{Tag.MultiAssignment}, false);
+        generateProduction(Tag.Assignment, new Tag[]{Tag.LeftSide, Tag.Assign, Tag.ListAndTuple}, false);
+        generateProduction(Tag.Assignment, new Tag[]{Tag.LeftSide, Tag.Assign, Tag.Dictionary}, false);
 
 //        LeftSide -> AssignableValue | ListAndTuple
         generateProduction(Tag.LeftSide, new Tag[]{Tag.AssignableValue}, false);
         generateProduction(Tag.LeftSide, new Tag[]{Tag.ListAndTuple}, false);
 
-//        MultiAssignment -> ListAndTuple = ListAndTuple
-//                | AssignableValue = Dictionary
-//                | AssignableValue = ListAndTuple
-        generateProduction(Tag.MultiAssignment, new Tag[]{Tag.ListAndTuple, Tag.Assign, Tag.ListAndTuple}, false);
-        generateProduction(Tag.MultiAssignment, new Tag[]{Tag.AssignableValue, Tag.Assign, Tag.Dictionary}, false);
-        generateProduction(Tag.MultiAssignment, new Tag[]{Tag.AssignableValue, Tag.Assign, Tag.ListAndTuple}, false);
 //
 //        Exp -> AssignmentExp
         generateProduction(Tag.Exp, new Tag[]{Tag.AssignmentExp}, false);

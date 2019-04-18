@@ -14,6 +14,10 @@ public class XDictObject extends XObject{
         hashMap.put(key, value);
     }
 
+    public XObject get(XObject key) {
+        return hashMap.get(key);
+    }
+
     @Override
     public void print() {
 

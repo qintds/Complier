@@ -128,11 +128,9 @@ NoAssignExp -> ConditionOrExp
 AssignmentExp -> NoAssignExp
                | Assignment
 Assignment -> LeftSide = AssignmentExp
-            | MultiAssignment
+            | LeftSide = ListAndTuple
+            | LeftSide = Dictionary
 LeftSide -> AssignableValue | ListAndTuple
-MultiAssignment -> ListAndTuple = ListAndTuple
-                | AssignableValue = Dictionary
-                | AssignableValue = ListAndTuple
 
 Exp -> AssignmentExp
 
