@@ -48,9 +48,10 @@ public class XEnv {
             obj = parent.getXObjectByName(identifier);
             if (obj == null) {
                 // undefined identifier
+                return null;
             }
         }
-        return null;
+        return obj;
     }
 
     public XObject getXObjectByNameQualify(String identifier) {

@@ -17,7 +17,7 @@ public class XBoolObject extends XObject{
 
     @Override
     public void print() {
-
+        System.out.print(value);
     }
 
     @Override

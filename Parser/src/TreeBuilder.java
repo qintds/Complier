@@ -46,6 +46,9 @@ public class TreeBuilder{
                 node = CNodeFactroy.createCNode(Tag.Primary);
                 node.setXObject(new XStringObject((Word)valueStack.peek()));
                 break;
+            case Primary_To_None:
+                node = CNodeFactroy.createCNode(Tag.None);
+                node.setXObject(new XNoneObject());
             case Primary_To_LBracket_NoAssignExp_RBracket:
                 node = CNodeFactroy.createCNode(Tag.Primary);
                 node.addChild((CNode)valueStack.get(valueStack.size() - 2));
@@ -374,6 +377,9 @@ public class TreeBuilder{
                 break;
             case ClassMemberDeclaration_To_Identifier_Assign_NoAssignExp:
                 node = CNodeFactroy.createCNode(Tag.ClassMemberDeclaration);
+                temp = CNodeFactroy.createCNode(Tag.Identifier);
+                temp.setIdentifier((Word)valueStack.get(valueStack.size() - 3));
+                node.addChild(temp);
                 node.addChild((CNode)valueStack.get(valueStack.size() - 1));
                 break;
             case ClassFuncDeclaration_To_Func_Identifier_LBracket_Self_RBracket_CompSt:
@@ -385,15 +391,15 @@ public class TreeBuilder{
                 //record the entrance of the function
                 generateClassFunctionEntrance((Word)valueStack.get(valueStack.size() - 5), node, false);
                 break;
-            case ClassFuncDeclaration_To_Func_Identifier_LBracket_Self_ParamList_RBracket_CompSt:
+            case ClassFuncDeclaration_To_Func_Identifier_LBracket_Self_Comma_ParamList_RBracket_CompSt:
                 node = CNodeFactroy.createCNode(Tag.ClassFuncDeclaration);
                 temp = CNodeFactroy.createCNode(Tag.Identifier);
-                temp.setIdentifier((Word)valueStack.get(valueStack.size() - 6));
+                temp.setIdentifier((Word)valueStack.get(valueStack.size() - 7));
                 node.addChild(temp);
                 node.addChild((CNode)valueStack.get(valueStack.size() - 3));
                 node.addChild((CNode)valueStack.get(valueStack.size() - 1));
                 //record the entrance of the function
-                generateClassFunctionEntrance((Word)valueStack.get(valueStack.size() - 6), node, true);
+                generateClassFunctionEntrance((Word)valueStack.get(valueStack.size() - 7), node, true);
                 break;
             case ClassBodyDeclaration_To_ClassMemberDeclaration:
             case ClassBodyDeclaration_To_FuncDeclaration:
@@ -410,6 +416,9 @@ public class TreeBuilder{
             case ClassBody_To_LBrace_ClassBodyDeclarations_RBrace:
                 node = CNodeFactroy.createCNode(Tag.ClassBody);
                 node.addChild((CNode)valueStack.get(valueStack.size() - 2));
+                break;
+            case ClassBody_To_LBrace_RBrace:
+                node = CNodeFactroy.createCNode(Tag.ClassBody);
                 break;
             case Super_To_Super_Comma_PackageChain:
                 node = CNodeFactroy.createCNode(Tag.Super);
@@ -450,11 +459,15 @@ public class TreeBuilder{
                 break;
             case ExtDef_To_ClassDeclaration:
             case ExtDef_To_ImportDeclaration:
+                node = CNodeFactroy.createCNode(Tag.ExtDef);
+                node.addChild((CNode) valueStack.get(valueStack.size() - 2));
+                break;
             case ExtDef_To_StmtList:
                 node = singleToSingle();
                 break;
             case ExtDef_To_FuncDeclaration:
-                node = singleToSingle();
+                node = CNodeFactroy.createCNode(Tag.ExtDef);
+                node.addChild((CNode) valueStack.get(valueStack.size() - 2));
                 recordNormalFunction();
                 break;
             case ExtDefList_To_ExtDef:

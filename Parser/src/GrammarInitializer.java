@@ -37,9 +37,9 @@ public class GrammarInitializer {
 //                | ClassDeclaration
 //                | FuncDeclaration
 //                | StmtList
-        generateProduction(Tag.ExtDef, new Tag[]{Tag.ImportDeclaration}, false);
-        generateProduction(Tag.ExtDef, new Tag[]{Tag.ClassDeclaration}, false);
-        generateProduction(Tag.ExtDef, new Tag[]{Tag.FuncDeclaration}, false);
+        generateProduction(Tag.ExtDef, new Tag[]{Tag.ImportDeclaration, Tag.LF}, false);
+        generateProduction(Tag.ExtDef, new Tag[]{Tag.ClassDeclaration, Tag.LF}, false);
+        generateProduction(Tag.ExtDef, new Tag[]{Tag.FuncDeclaration, Tag.LF}, false);
         generateProduction(Tag.ExtDef, new Tag[]{Tag.StmtList}, false);
 
 
@@ -63,6 +63,7 @@ public class GrammarInitializer {
 
 //        ClassBody -> { ClassBodyDeclarations }
         generateProduction(Tag.ClassBody, new Tag[]{Tag.LBrace, Tag.ClassBodyDeclarations, Tag.RBrace}, false);
+        generateProduction(Tag.ClassBody, new Tag[]{Tag.LBrace, Tag.RBrace}, false);
 
 //        ClassBodyDeclarations -> ClassBodyDeclaration
 //                | ClassBodyDeclarations ClassBodyDeclaration
@@ -231,6 +232,7 @@ public class GrammarInitializer {
 //                | TRUE
 //                | FALSE
 //                | STRING
+//                | NONE
         generateProduction(Tag.Primary, new Tag[]{Tag.LBracket, Tag.NoAssignExp, Tag.RBracket}, false);
         generateProduction(Tag.Primary, new Tag[]{Tag.Variable}, false);
         generateProduction(Tag.Primary, new Tag[]{Tag.Num}, false);
@@ -238,6 +240,8 @@ public class GrammarInitializer {
         generateProduction(Tag.Primary, new Tag[]{Tag.True}, false);
         generateProduction(Tag.Primary, new Tag[]{Tag.False}, false);
         generateProduction(Tag.Primary, new Tag[]{Tag.String}, false);
+        generateProduction(Tag.Primary, new Tag[]{Tag.None}, false);
+
 //
 //        UnaryExp -> Primary
 //                | - Primary

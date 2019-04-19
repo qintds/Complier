@@ -4,8 +4,10 @@ public class OFunction {
         if (object == null)return;
         XTupleObject temp = (XTupleObject)object;
         for (int i = 0; i < temp.size(); i++) {
+            if (i != 0)
+                System.out.print(", ");
             temp.get(i).print();
-            System.out.print(", ");
+
         }
     }
 

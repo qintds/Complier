@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.Map;
 
 public class XDictObject extends XObject{
 
@@ -20,7 +21,18 @@ public class XDictObject extends XObject{
 
     @Override
     public void print() {
-
+        System.out.print('{');
+        int count = 0;
+        for (Map.Entry<XObject,XObject> item : hashMap.entrySet()) {
+            if (count != 0) {
+                System.out.print(", ");
+            }
+            item.getKey().print();
+            System.out.print(':');
+            item.getValue().print();
+            count++;
+        }
+        System.out.print('}');
     }
 
     @Override

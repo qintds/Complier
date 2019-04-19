@@ -5,13 +5,13 @@ class Good {
     classVar1 = 30
     classVar2 = "string2"
 
-    Good(self, para1, para2) {
+    func Good(self, para1, para2) {
         self.instance1 = para1
         self.instance2 = para2
-        print(self.instance1, self.instance2)
+        println(self.instance1, self.instance2)
     }
 
-    add(self) {
+    func add(self) {
         return self.instance1 + self.instance2
     }
 
@@ -20,9 +20,24 @@ class Good {
 func nothing() {
     var4 = 20
     instance = Good(var2, var4)
-    print(instance.add())
+    println(instance.add())
     return instance.add(), var1
 }
 
 print(var3)
-print(nothing())
+println()
+println(nothing())
+
+if var1 < 5 {
+print("1")
+} elif var2 == 3.142 {
+print("2")
+} elif false {
+} else {
+print("4")
+}
+good = 10
+repeat good <= 20 {
+println(good)
+good = good + 2
+}

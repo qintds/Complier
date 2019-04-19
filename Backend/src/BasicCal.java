@@ -42,9 +42,10 @@ public class BasicCal {
 
             }
         } else {
-            if (a.type == XType.xReal && b.type ==XType.xNum
-                    || a.type == XType.xNum && b.type ==XType.xReal) {
-                return realBinaryExp((XRealObject)a, (XRealObject)b, op);
+            if (a.type == XType.xReal && b.type ==XType.xNum){
+                return realBinaryExp((XRealObject)a, new XRealObject((XNumObject) b), op);
+            } else if (a.type == XType.xNum && b.type ==XType.xReal) {
+                return realBinaryExp(new XRealObject((XNumObject) a), (XRealObject)b, op);
             }
         }
         return null;

@@ -1,6 +1,6 @@
 public class Real extends Token {
-    public final float value;
-    public Real(float v) {
+    public final double value;
+    public Real(double v) {
         super(Tag.Real);
         value = v;
     }

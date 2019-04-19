@@ -1,5 +1,3 @@
-import java.util.Vector;
-
 public class LexerTest {
     public static void main(String[] args) {
         LexerTest inner = new LexerTest();
@@ -14,10 +12,9 @@ public class LexerTest {
 ////        Lexer lex = new Lexer("codeFile");
 ////        lex.run();
 ////        printCF(lex.presentFile);
-        Vector<Integer> abc = new Vector<>();
-        abc.add(1);
-        abc.add(2);
-        System.out.println(abc.get(3));
+        float a=1, d=10;
+        int i = 3;
+        System.out.print(a+i/10.0);
 
     }
 

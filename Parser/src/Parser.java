@@ -33,7 +33,7 @@ public class Parser {
         GrammarStateManager stateManager = GrammarStateManager.getInstance();
         stateManager.buildTransitionStateMechine();
 
-        Lexer lexer = new Lexer("codeTest1");
+        Lexer lexer = new Lexer("codeTest");
         lexer.run();
 
         printCF(lexer.presentFile);

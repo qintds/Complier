@@ -12,7 +12,7 @@ public class XStringObject extends XObject {
     }
     @Override
     public void print() {
-
+        System.out.print(value);
     }
 
     @Override

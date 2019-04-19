@@ -5,7 +5,6 @@ public class XInstanceObject extends XObject{
     public XInstanceObject(String className) {
         super(XType.xInstance);
         this.className = className;
-        env = new XEnv(null);
     }
 
     @Override

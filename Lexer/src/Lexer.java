@@ -187,7 +187,7 @@ public class Lexer {
             if (peek != '.')
                 return new Num(value);
 
-            float fvalue = value, d = 10;
+            double fvalue = value, d = 10;
 
             while (true) {
                 readch();

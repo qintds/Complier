@@ -1,8 +1,8 @@
 Program -> ExtDefList
 ExtDefList -> ExtDefList ExtDef | ExtDef
-ExtDef -> ImportDeclaration
-        | ClassDeclaration
-        | FuncDeclaration
+ExtDef -> ImportDeclaration LF
+        | ClassDeclaration LF
+        | FuncDeclaration LF
         | StmtList
 
 ImportDeclaration -> IMPORT PackageChain
@@ -11,7 +11,7 @@ PackageChain -> IDENTIFIER | PackageChain . IDENTIFIER
 ClassDeclaration -> CLASS IDENTIFIER : Super ClassBody
 ClassDeclaration -> CLASS IDENTIFIER ClassBody
 Super -> Super , PackageChain | PackageChain
-ClassBody -> { ClassBodyDeclarations }
+ClassBody -> { ClassBodyDeclarations } | {}
 ClassBodyDeclarations -> ClassBodyDeclaration
                        | ClassBodyDeclarations ClassBodyDeclaration
 ClassBodyDeclaration -> ClassMemberDeclaration
@@ -99,6 +99,7 @@ Primary -> ( NoAssignExp )
          | TRUE
          | FALSE
          | STRING
+         | NONE
 
 UnaryExp -> Primary
           | - Primary

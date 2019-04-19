@@ -4,6 +4,7 @@ public abstract class XObject {
     XEnv env;
     public XObject(XType xType) {
         type = xType;
+        env = new XEnv(null);
     }
 
     public abstract void print();

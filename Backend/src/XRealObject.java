@@ -11,6 +11,11 @@ public class XRealObject extends XObject {
         this.value = d;
     }
 
+    public XRealObject(XNumObject numObject) {
+        super(XType.xReal);
+        this.value = numObject.value;
+    }
+
     public XRealObject(int i) {
         super(XType.xReal);
         this.value = i;
@@ -18,7 +23,7 @@ public class XRealObject extends XObject {
 
     @Override
     public void print() {
-
+        System.out.print(value);
     }
 
     @Override

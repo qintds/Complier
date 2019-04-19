@@ -36,10 +36,13 @@ public class OFunctionTable {
         switch (funcName) {
             case "print":
                 OFunction.print(args);
+                break;
             case "println":
                 OFunction.println(args);
+                break;
             case "type":
                 OFunction.printType(args);
+                break;
         }
     }
 
