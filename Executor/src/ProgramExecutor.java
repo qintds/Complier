@@ -406,9 +406,10 @@ public class ProgramExecutor {
     }
 
     public boolean alignAction(CNode node, int child) {
-        if (node.getChild(child).getAlignAction() == AlignAction.xBreak) {
-            node.xBreak();
+        if (node.getChild(child).getAlignAction() == AlignAction.xReturn) {
+            node.xReturn();
             node.getChild(child).setBackAlignAction();
+            node.setXObject(node.getChild(child).getXObject());
             return true;
         } else if (node.getChild(child).getAlignAction() == AlignAction.xBreak) {
             node.xBreak();
@@ -439,7 +440,7 @@ public class ProgramExecutor {
     public void	Stmt(CNode node) {
         switch (node.production) {
             case Stmt_To_Break:
-                if (runEnv.envOwner == XEnvOwner.xRepeat) {
+                if (insideRepeat()) {
                     node.xBreak();
                 } else {
                     // no break
@@ -450,7 +451,7 @@ public class ProgramExecutor {
                 if (alignAction(node, 0)) return;
                 break;
             case Stmt_To_Continue:
-                if (runEnv.envOwner == XEnvOwner.xRepeat) {
+                if (insideRepeat()) {
                     node.xContinue();
                 } else {
                     // no continue
@@ -467,7 +468,7 @@ public class ProgramExecutor {
                 if (alignAction(node, 0)) return;
                 break;
             case Stmt_To_ReturnStmt_LF:
-                if (runEnv.envOwner == XEnvOwner.xNormalFunc || runEnv.envOwner == XEnvOwner.xInstanceFunc){
+                if (insideFunc()){
                     ReturnStmt(node.getChild(0));
                     node.setXObject(node.getChild(0).getXObject());
                     node.xReturn();
@@ -1095,6 +1096,28 @@ public class ProgramExecutor {
 //                node.setXObject(node.getChild(0).getXObject());
                 break;
         }
+    }
+
+
+    private boolean insideFunc() {
+        for (int i = 0; i < envStack.size(); i++) {
+            if (envStack.get(i).envOwner == XEnvOwner.xInstanceFunc || envStack.get(i).envOwner == XEnvOwner.xNormalFunc) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean insideRepeat() {
+        for (int i = 0; i < envStack.size(); i++) {
+            if (envStack.get(i).envOwner == XEnvOwner.xRepeat) {
+                return true;
+            }
+            if (envStack.get(i).envOwner == XEnvOwner.xInstanceFunc || envStack.get(i).envOwner == XEnvOwner.xNormalFunc) {
+                return false;
+            }
+        }
+        return false;
     }
 
 }

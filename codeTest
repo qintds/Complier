@@ -23,21 +23,4 @@ func nothing() {
     println(instance.add())
     return instance.add(), var1
 }
-
-print(var3)
-println()
 println(nothing())
-
-if var1 < 5 {
-print("1")
-} elif var2 == 3.142 {
-print("2")
-} elif false {
-} else {
-print("4")
-}
-good = 10
-repeat good <= 20 {
-println(good)
-good = good + 2
-}

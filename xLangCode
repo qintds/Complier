@@ -256,6 +256,11 @@ Variable -> AssignableValue
 继承
 函数预设值 和 给指定形参赋值
 
+再探索下python变量的作用域
+
+比如修改了引入module 的一个class， 但module内对这个class的值进行了修改
+class的值如何，证明实际上已经执行完这个文件了
+
 
 
 
