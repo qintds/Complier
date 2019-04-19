@@ -82,6 +82,7 @@ public class LRStateTableParser {
 
             } else if (action == 0) {
                 // accept
+                doReduce(0);
                 System.out.println("Process finished");// with exit code 0
                 return;
             } else {

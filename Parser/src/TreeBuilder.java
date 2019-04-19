@@ -144,19 +144,13 @@ public class TreeBuilder{
             case LeftSide_To_ListAndTuple:
                 node = singleToSingle();
                 break;
-            case MultiAssignment_To_AssignableValue_Assign_Dictionary:
-            case MultiAssignment_To_AssignableValue_Assign_ListAndTuple:
-            case MultiAssignment_To_ListAndTuple_Assign_ListAndTuple:
-                node = CNodeFactroy.createCNode(Tag.MultiAssignment);
-                node.addChild((CNode)valueStack.get(valueStack.size() - 3));
-                node.addChild((CNode)valueStack.get(valueStack.size() - 1));
-                break;
             case Assignment_To_LeftSide_Assign_AssignmentExp:
+            case Assignment_To_LeftSide_Assign_Dictionary:
+            case Assignment_To_LeftSide_Assign_ListAndTuple:
                 node = CNodeFactroy.createCNode(Tag.Assignment);
                 node.addChild((CNode)valueStack.get(valueStack.size() - 3));
                 node.addChild((CNode)valueStack.get(valueStack.size() - 1));
                 break;
-            case Assignment_To_MultiAssignment:
             case Exp_To_AssignmentExp:
             case Args_To_Exp:
                 node = singleToSingle();
@@ -308,7 +302,6 @@ public class TreeBuilder{
             case Stmt_To_CompSt_LF:
             case Stmt_To_Exp_LF:
             case Stmt_To_IfElseStmt_LF:
-            case Stmt_To_MultiAssignment_LF:
             case Stmt_To_RepeatStmt_LF:
             case Stmt_To_ReturnStmt_LF:
                 node = CNodeFactroy.createCNode(Tag.Stmt);

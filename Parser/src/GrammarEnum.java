@@ -56,7 +56,6 @@ public enum GrammarEnum {
     StmtList_To_StmtList_Stmt,
     StmtList_To_Stmt,
     Stmt_To_Exp_LF,
-    Stmt_To_MultiAssignment_LF,
     Stmt_To_CompSt_LF,
     Stmt_To_ReturnStmt_LF,
     Stmt_To_IfElseStmt_LF,

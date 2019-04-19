@@ -19,6 +19,7 @@ public class ProgramExecutor {
     public ProgramExecutor(CNode root, HashMap<String, XFuncObject> funcMap, HashMap<String, XClassObject> classMap) {
         this.root = root;
         runEnv = new XEnv(null);
+        runEnv.merge(OFunctionTable.getInstance().getEnv());
         runEnv.merge(funcMap, classMap);
         pointer = root;
         nodeStack = new Stack<>();
@@ -416,7 +417,6 @@ public class ProgramExecutor {
                 Exp(node.getChild(0));break;
             case Stmt_To_IfElseStmt_LF:
                 IfElseStmt(node.getChild(0));break;
-            case Stmt_To_MultiAssignment_LF:
             case Stmt_To_RepeatStmt_LF:
                 RepeatStmt(node.getChild(0));break;
             case Stmt_To_ReturnStmt_LF:

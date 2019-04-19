@@ -149,13 +149,12 @@ public class GrammarInitializer {
         generateProduction(Tag.StmtList, new Tag[]{Tag.StmtList, Tag.Stmt}, false);
         generateProduction(Tag.StmtList, new Tag[]{Tag.Stmt}, false);
 //        Stmt -> Exp
-//                | MultiAssignment
+//
 //                | CompSt
 //                | ReturnStmt
 //                | IfElseStmt
 //                | RepeatStmt
         generateProduction(Tag.Stmt, new Tag[]{Tag.Exp, Tag.LF}, false);
-        generateProduction(Tag.Stmt, new Tag[]{Tag.MultiAssignment, Tag.LF}, false);
         generateProduction(Tag.Stmt, new Tag[]{Tag.CompSt, Tag.LF}, false);
         generateProduction(Tag.Stmt, new Tag[]{Tag.ReturnStmt, Tag.LF}, false);
         generateProduction(Tag.Stmt, new Tag[]{Tag.IfElseStmt, Tag.LF}, false);

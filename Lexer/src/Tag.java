@@ -126,7 +126,6 @@ public enum Tag {
         AssignmentExp,
         Assignment,
         LeftSide,
-        MultiAssignment,
         Exp,
         ArgsName,
         Args;

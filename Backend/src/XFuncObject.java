@@ -16,6 +16,13 @@ public class XFuncObject extends XObject {
         funcEnv = new XEnv(null);
     }
 
+    public XFuncObject(String name, CNode body) {
+        super(XType.xFunc);
+        this.funcName = name;
+        funcBody = body;
+        funcEnv = new XEnv(null);
+    }
+
     public void setLevel(int i) {
         level = i;
     }

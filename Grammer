@@ -55,7 +55,6 @@ CompSt -> { StmtList }
 CompSt -> {  }
 StmtList -> StmtList Stmt | Stmt
 Stmt -> Exp ENTER
-      | MultiAssignment ENTER
       | CompSt ENTER
       | ReturnStmt ENTER
       | IfElseStmt ENTER
