@@ -24,3 +24,17 @@ func nothing() {
     return instance.add(), var1
 }
 println(nothing())
+
+good = 10
+
+repeat true {
+good = good + 2
+    if good > 20 {
+        break
+    }
+    if good == 14 {
+        continue
+    }
+    println(good)
+
+}

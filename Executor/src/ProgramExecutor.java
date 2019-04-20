@@ -370,9 +370,7 @@ public class ProgramExecutor {
                     envStack.pop();
                     runEnv = envStack.peek();
                 }
-                if (returnAction(node, 0)) return;
-                if (breakAction(node, 0)) return;
-                if (continueAction(node, 0)) return;
+                if (alignAction(node, 0)) return;
                 break;
         }
     }
@@ -570,12 +568,12 @@ public class ProgramExecutor {
                             CompSt(node.getChild(1), false);
                             envStack.pop();
                             runEnv = envStack.peek();
-                            if (returnAction(node, 0)) return;
-                            if (breakAction(node, 0)) {
+                            if (returnAction(node, 1)) return;
+                            if (breakAction(node, 1)) {
                                 node.setBackAlignAction();
                                 break;
                             }
-                            if (continueAction(node, 0)) {
+                            if (continueAction(node, 1)) {
                                 node.setBackAlignAction();
                             }
                             repeatCount++;
@@ -598,12 +596,12 @@ public class ProgramExecutor {
                             CompSt(node.getChild(1), false);
                             envStack.pop();
                             runEnv = envStack.peek();
-                            if (returnAction(node, 0)) return;
-                            if (breakAction(node, 0)) {
+                            if (returnAction(node, 1)) return;
+                            if (breakAction(node, 1)) {
                                 node.setBackAlignAction();
                                 break;
                             }
-                            if (continueAction(node, 0)) {
+                            if (continueAction(node, 1)) {
                                 node.setBackAlignAction();
                             }
                             repeatCount++;
