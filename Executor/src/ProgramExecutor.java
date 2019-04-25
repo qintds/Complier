@@ -81,7 +81,7 @@ public class ProgramExecutor {
     public XEnv	PackageChainImport(CNode node) {
         switch (node.production) {
             case PackageChain_To_Identifier:
-                return Parser.importFile(node.getChild(0).getIdentifier());
+                return Parser.importFile(node.getIdentifier());
             case PackageChain_To_PackageChain_Dot_Identifier:
                 XEnv temp = PackageChainImport(node.getChild(0));
                 return temp.getXObjectByNameQualify(node.getChild(1).getIdentifier()).env;
@@ -1033,22 +1033,18 @@ public class ProgramExecutor {
             case Assignment_To_LeftSide_Assign_AssignmentExp:
                 AssignmentExp(node.getChild(1));
                 rightValue = node.getChild(1).getXObject();
-                assignObject = new AssignLeftStruct();
                 LeftSide(node.getChild(0));
                 node.setXObject(rightValue);
                 break;
             case Assignment_To_LeftSide_Assign_Dictionary:
                 Dictionary(node.getChild(1));
                 rightValue = node.getChild(1).getXObject();
-                assignLeftList = new AssignLeftList();
                 LeftSide(node.getChild(0));
                 node.setXObject(rightValue);
                 break;
             case Assignment_To_LeftSide_Assign_ListAndTuple:
                 ListAndTuple(node.getChild(1));
-                Dictionary(node.getChild(1));
                 rightValue = node.getChild(1).getXObject();
-                assignLeftList = new AssignLeftList();
                 LeftSide(node.getChild(0));
                 node.setXObject(rightValue);
                 break;
@@ -1057,10 +1053,13 @@ public class ProgramExecutor {
     public void	LeftSide(CNode node){
         switch (node.production) {
             case LeftSide_To_AssignableValue:
+                assignObject = new AssignLeftStruct();
                 AssignableValue(node.getChild(0), true);
             case LeftSide_To_ListAndTuple:
-                if (rightValue.type == XType.xTuple || rightValue.type == XType.xList)
+                if (rightValue.type == XType.xTuple || rightValue.type == XType.xList) {
+                    assignLeftList = new AssignLeftList();
                     ListAndTupleAssign(node.getChild(0));
+                }
                 else {
                     // type can not assign to left
                 }

@@ -22,6 +22,7 @@ public class Parser {
         lrParser.parse();
 
         ProgramExecutor executor = new ProgramExecutor(lrParser.getProgram(), lrParser.getFuncMap(), lrParser.getClassMap());
+        executor.run();
         return executor.runEnv;
     }
 
@@ -33,7 +34,7 @@ public class Parser {
         GrammarStateManager stateManager = GrammarStateManager.getInstance();
         stateManager.buildTransitionStateMechine();
 
-        Lexer lexer = new Lexer("codeTest");
+        Lexer lexer = new Lexer("codeTest1");
         lexer.run();
 
         printCF(lexer.presentFile);

@@ -1,3 +1,4 @@
+import codeTest1
 var1 = 10
 var2 = 3.14
 var3 = "string1"
