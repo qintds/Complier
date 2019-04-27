@@ -26,10 +26,21 @@ public class XBoolObject extends XObject{
     }
 
     @Override
-    public boolean equals(XObject object) {
+    public boolean equals(Object obj) {
+        XObject object = (XObject)obj;
         if (object.type == XType.xBool) {
             return ((XBoolObject)object).value == this.value;
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
+
+    @Override
+    public void initialEnv() {
+
     }
 }

@@ -1,8 +1,11 @@
+import java.util.HashMap;
+
 public class OFunctionTable {
 
 
     public static OFunctionTable self;
     private XEnv env = new XEnv(null);
+    private HashMap<String, XFuncObject> oFuncMap = new HashMap<>();
     private OFunctionTable() {
 
     }
@@ -15,35 +18,52 @@ public class OFunctionTable {
         return self;
     }
 
-    private XFuncObject oFuncCreater(String name) {
-        XFuncObject temp = new XFuncObject(name, null);
-        temp.isOriginal = true;
-        temp.setContainParams(true);
+    public XFuncObject oFuncCreator(String name) {
+        XFuncObject temp;
+        if (oFuncMap.containsKey(name)){
+            temp = oFuncMap.get(name);
+        } else {
+            temp = new XFuncObject(name, null);
+            temp.isOriginal = true;
+            temp.setContainParams(true);
+            oFuncMap.put(name, temp);
+        }
         return temp;
     }
 
     private void originalFuncEnv() {
-        env.setXObjectByName("print", oFuncCreater("print"));
-        env.setXObjectByName("println", oFuncCreater("println"));
-        env.setXObjectByName("type", oFuncCreater("type"));
+        env.setXObjectByNameQualify("print", oFuncCreator("print"));
+        env.setXObjectByNameQualify("println", oFuncCreator("println"));
+        env.setXObjectByNameQualify("type", oFuncCreator("type"));
+        env.setXObjectByNameQualify("str", oFuncCreator("str"));
     }
 
     public XEnv getEnv() {
         return env;
     }
 
-    public void callOriginalFunc(String funcName, XObject args) {
+    public XObject callOriginalFunc(String funcName, XObject args) {
         switch (funcName) {
             case "print":
-                OFunction.print(args);
-                break;
+                return OFunction.print(args);
             case "println":
-                OFunction.println(args);
-                break;
+                return OFunction.println(args);
             case "type":
-                OFunction.printType(args);
-                break;
+                return OFunction.printType(args);
+            case "str":
+                return OFunction.str(args);
+                //list
+            case "listAppend":
+                return OFunction.listAppend(args);
+            case "listClear":
+                return OFunction.listClear(args);
+            case "listSize":
+                return OFunction.listSize(args);
+                //String
+            case "stringSplit":
+                return OFunction.stringSplit(args);
         }
+        return null;
     }
 
 }

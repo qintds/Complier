@@ -1,0 +1,28 @@
+original = [4, 6, 2, 5, 8, 1, 3, 7]
+
+func quickSort(a, l, r) {
+    if l < r {
+        low = l
+        high = r
+        x = a[l]
+        repeat low < high {
+            repeat low < high and a[high] >= x {
+                high = high - 1
+            }
+
+            a[low] = a[high]
+
+            repeat low < high and a[low] <= x {
+                low = low + 1
+            }
+
+            a[high] = a[low]
+        }
+        a[low] = x
+        quickSort(a, 0, low -1)
+        quickSort(a, low + 1, r)
+    }
+}
+
+quickSort(original, 0, original.size() - 1)
+println(original)

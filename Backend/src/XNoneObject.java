@@ -15,7 +15,17 @@ public class XNoneObject extends XObject {
     }
 
     @Override
-    public boolean equals(XObject object) {
+    public boolean equals(Object obj) {
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
+
+    @Override
+    public void initialEnv() {
+
     }
 }

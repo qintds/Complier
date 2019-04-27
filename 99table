@@ -1,0 +1,16 @@
+func range(end) {
+    s = 0
+    i = []
+    repeat s < end {
+        i.append(s)
+        s = s + 1
+    }
+    return i
+}
+
+repeat i in range(9) {
+    repeat j in range(i + 1) {
+        print(str(i + 1) + " x " + str(j + 1) + " = " + str((i+1)*(j+1)) + "    ")
+    }
+    println()
+}

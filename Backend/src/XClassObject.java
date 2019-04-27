@@ -30,7 +30,7 @@ public class XClassObject extends XObject{
     }
 
     public XInstanceObject initial() {
-        XInstanceObject instance = new XInstanceObject(className);
+        XInstanceObject instance = new XInstanceObject(className, originalInstanceEnv);
         return instance;
     }
 
@@ -45,8 +45,18 @@ public class XClassObject extends XObject{
     }
 
     @Override
-    public boolean equals(XObject object) {
+    public boolean equals(Object obj) {
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
+
+    @Override
+    public void initialEnv() {
+
     }
 
     public XEnv getOriginalInstanceEnv() {

@@ -6,6 +6,7 @@ public class XListObject extends XObject implements XIterable {
 
     public XListObject() {
         super(XType.xList);
+        initialEnv();
         list = new ArrayList<>();
     }
 
@@ -72,7 +73,19 @@ public class XListObject extends XObject implements XIterable {
     }
 
     @Override
-    public boolean equals(XObject object) {
+    public boolean equals(Object obj) {
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
+
+    @Override
+    public void initialEnv() {
+        env.setXObjectByNameQualify("append", OFunctionTable.getInstance().oFuncCreator("listAppend"));
+        env.setXObjectByNameQualify("clear", OFunctionTable.getInstance().oFuncCreator("listClear"));
+        env.setXObjectByNameQualify("size", OFunctionTable.getInstance().oFuncCreator("listSize"));
     }
 }

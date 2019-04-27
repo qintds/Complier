@@ -35,8 +35,19 @@ public class XTupleObject extends XObject implements XIterable {
     }
 
     @Override
-    public boolean equals(XObject object) {
+    public boolean equals(Object obj) {
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
+
+
+    @Override
+    public void initialEnv() {
+
     }
 
     @Override

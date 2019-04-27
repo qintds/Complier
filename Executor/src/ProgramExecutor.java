@@ -582,13 +582,14 @@ public class ProgramExecutor {
                 } else if (cond.production == GrammarEnum.RepeatCond_To_RepeatParam_In_IterateValue) {
                     IterateValue(cond.getChild(1));
                     XObject iterate = cond.getChild(1).getXObject();
-                    assignLeftList = new AssignLeftList();
-                    RepeatParam(cond.getChild(0));
+
                     if (iterate.type == XType.xList || iterate.type == XType.xTuple)
                     {
                         XIterable xIterate = (XIterable) iterate;
                         int maxRepeat = xIterate.size();
                         while (repeatCount < maxRepeat) {
+                            assignLeftList = new AssignLeftList();
+                            RepeatParam(cond.getChild(0));
                             envStack.push(new XEnv(runEnv));
                             runEnv = envStack.peek();
                             runEnv.envOwner = XEnvOwner.xRepeat;
@@ -653,14 +654,19 @@ public class ProgramExecutor {
         boolean isInstanceDotInvocation = false;
         if (node.hasBrother()) {
             XObject brother = node.getBrother();
+            object = brother.getInstanceMember(node.getIdentifier());
+            isInstanceDotInvocation = true;
             if (brother.type == XType.xClass) {
-                XClassObject xClassObject = (XClassObject)brother;
-                object = xClassObject.getFromClass(node.getIdentifier());
-            } else if (brother.type == XType.xInstance) {
-                isInstanceDotInvocation = true;
-                XInstanceObject xInstanceObject = (XInstanceObject)brother;
-                object = ((XClassObject)runEnv.getXObjectByName(xInstanceObject.getClassName())).getFromInstance(node.getIdentifier());
+                isInstanceDotInvocation = false;
             }
+//            if (brother.type == XType.xClass) {
+//                XClassObject xClassObject = (XClassObject)brother;
+//                object = xClassObject.getFromClass(node.getIdentifier());
+//            } else if (brother.type == XType.xInstance) {
+//                isInstanceDotInvocation = true;
+//                XInstanceObject xInstanceObject = (XInstanceObject)brother;
+//                object = ((XClassObject)runEnv.getXObjectByName(xInstanceObject.getClassName())).getFromInstance(node.getIdentifier());
+//            }
         } else {
             object = runEnv.getXObjectByName(node.getIdentifier());
         }
@@ -686,7 +692,13 @@ public class ProgramExecutor {
                     } else {
                         XFuncObject xFuncObject = (XFuncObject)object;
                         if (xFuncObject.isOriginal) {
-                            OFunctionTable.getInstance().callOriginalFunc(xFuncObject.getFuncName(), null);
+                            if (isInstanceDotInvocation) {
+                                XTupleObject argTuple = new XTupleObject();
+                                argTuple.initial(node.getBrother());
+                                node.setXObject(OFunctionTable.getInstance().callOriginalFunc(xFuncObject.getFuncName(), argTuple));
+                            } else {
+                                node.setXObject(OFunctionTable.getInstance().callOriginalFunc(xFuncObject.getFuncName(), null));
+                            }
                         } else {
                             envStack.push(xFuncObject.getFuncEnv());
                             runEnv = envStack.peek();
@@ -733,9 +745,12 @@ public class ProgramExecutor {
                         XFuncObject xFuncObject = (XFuncObject)object;
                         if (xFuncObject.isOriginal) {
                             XTupleObject argTuple = new XTupleObject();
+                            if (isInstanceDotInvocation) {
+                                argTuple.initial(node.getBrother());
+                            }
                             node.getChild(0).setBrother(argTuple);
                             Args(node.getChild(0));
-                            OFunctionTable.getInstance().callOriginalFunc(xFuncObject.getFuncName(), argTuple);
+                            node.setXObject(OFunctionTable.getInstance().callOriginalFunc(xFuncObject.getFuncName(), argTuple));
                         } else {
                             assignLeftList = new AssignLeftList();
                             ParamList(xFuncObject.getParams());

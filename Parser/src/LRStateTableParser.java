@@ -93,7 +93,7 @@ public class LRStateTableParser {
                 int reduceProductionNum = - action;
                 Production production = ProductionManager.getInstance().getProductionByIndex(reduceProductionNum);
                 CNode reduceResult = doReduce(reduceProductionNum);
-                System.out.print(inputToken.tag);
+//                System.out.print(inputToken.tag);
 
                 // pop the size of the production
                 int rightSize = production.right.size();

@@ -9,5 +9,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="Lexer" />
     <orderEntry type="module" module-name="Parser" />
+    <orderEntry type="module" module-name="Executor" />
   </component>
 </module>

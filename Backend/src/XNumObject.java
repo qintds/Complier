@@ -21,10 +21,20 @@ public class XNumObject extends XObject {
     }
 
     @Override
-    public boolean equals(XObject object) {
+    public boolean equals(Object obj) {
+        XObject object = (XObject)obj;
         if (object.type == XType.xNum) {
             return ((XNumObject)object).value == this.value;
         }
         return false;
+    }
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(value);
+    }
+
+    @Override
+    public void initialEnv() {
+
     }
 }

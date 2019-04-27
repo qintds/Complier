@@ -9,7 +9,9 @@ public abstract class XObject {
 
     public abstract void print();
     public abstract void genCode();
-    public abstract boolean equals(XObject object);
+//    public abstract boolean equals(XObject object);
+    public abstract boolean equals(Object object);
+    public abstract int hashCode();
     public void refAdd() {
         refCount++;
     }
@@ -21,8 +23,10 @@ public abstract class XObject {
         return env.getXObjectByNameQualify(identifier);
     }
     public void setInstanceMember(String identifier, XObject object) {
-        if (type == XType.xClass || type == XType.xInstance)
             env.setXObjectByNameQualify(identifier, object);
     }
+
+
+    public abstract void initialEnv();
 
 }

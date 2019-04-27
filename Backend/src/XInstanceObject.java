@@ -2,9 +2,10 @@ public class XInstanceObject extends XObject{
 
     private String className;
 
-    public XInstanceObject(String className) {
+    public XInstanceObject(String className, XEnv funcEnv) {
         super(XType.xInstance);
         this.className = className;
+        env.merge(funcEnv);
     }
 
     @Override
@@ -18,8 +19,18 @@ public class XInstanceObject extends XObject{
     }
 
     @Override
-    public boolean equals(XObject object) {
+    public boolean equals(Object obj) {
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
+
+    @Override
+    public void initialEnv() {
+
     }
 
     public String getClassName() {

@@ -27,9 +27,6 @@ public class GrammarState {
         this.closureSet.addAll(this.productions);
 
         System.out.println(stateNum);
-        if (stateNum>10000) {
-            System.out.println("stop");
-        }
     }
 
     public void startTransition() {
@@ -63,9 +60,6 @@ public class GrammarState {
 
             ArrayList<Production> symbolProductions = productionManager.getProductionsByLeft(symbolTag);
             ArrayList<Tag> lookAhead = production.computeDotSymbolFirstSetOfBetaAndA();
-            if(symbolTag == Tag.Exp && lookAhead.contains(Tag.LBracket)) {
-                System.out.println("!");
-            }
 
 
             Iterator iterator = symbolProductions.iterator();

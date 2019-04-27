@@ -32,10 +32,21 @@ public class XRealObject extends XObject {
     }
 
     @Override
-    public boolean equals(XObject object) {
+    public boolean equals(Object obj) {
+        XObject object = (XObject)obj;
         if (object.type == XType.xReal) {
             return ((XRealObject)object).value == this.value;
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Double.hashCode(value);
+    }
+
+    @Override
+    public void initialEnv() {
+
     }
 }
