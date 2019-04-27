@@ -1,5 +1,5 @@
 print("Hello World")
-abc = [1,2,3,4,5]
+abc = [1,2.55,"good",4,5]
 repeat d in abc {
 println(d)
 }
