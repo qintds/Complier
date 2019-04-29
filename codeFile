@@ -1,2 +1,19 @@
-class good {
+title = "Hello"
+class Good {
+    word = "世界"
+    number = 6
+    func Good(self, para1, para2, para3) {
+        self.var1 = para1
+        self.var2 = para2
+        self.var3 = para3
+    }
+    func add(self) {
+        return self.var1 + self.var2 + Good.number
+    }
+
 }
+instance = Good(3.5, 7, "好的")
+println(title + instance.var3 + Good.word) // 应输出:Hello好的世界
+println(instance.add()) // 应输出16.5
+
+

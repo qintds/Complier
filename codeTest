@@ -1,15 +1,10 @@
-import codeTest1
-var1 = 10
-var2 = 3.14
-var3 = "string1"
+title = "Hello"
 class Good {
-    classVar1 = 30
-    classVar2 = "string2"
-
+    word = "世界"
+    number = 6
     func Good(self, para1, para2) {
         self.instance1 = para1
         self.instance2 = para2
-        println(self.instance1, self.instance2)
     }
 
     func add(self) {

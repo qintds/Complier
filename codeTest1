@@ -1,7 +1,5 @@
 import poems
-
 poem = poems["春望"]
-
 println(poem["title"])
 println(poem["author"])
 content = poem["content"].split("。")

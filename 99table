@@ -10,7 +10,7 @@ func range(end) {
 
 repeat i in range(9) {
     repeat j in range(i + 1) {
-        print(str(i + 1) + " x " + str(j + 1) + " = " + str((i+1)*(j+1)) + "    ")
+        print(str(i+1)+"x"+str(j+1)+"="+str((i+1)*(j+1))+" ")
     }
     println()
 }

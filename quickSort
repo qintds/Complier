@@ -1,5 +1,5 @@
 original = [4, 6, 2, 5, 8, 1, 3, 7]
-
+//快速排序函数
 func quickSort(a, l, r) {
     if l < r {
         low = l
@@ -9,13 +9,10 @@ func quickSort(a, l, r) {
             repeat low < high and a[high] >= x {
                 high = high - 1
             }
-
             a[low] = a[high]
-
             repeat low < high and a[low] <= x {
                 low = low + 1
             }
-
             a[high] = a[low]
         }
         a[low] = x
@@ -23,6 +20,7 @@ func quickSort(a, l, r) {
         quickSort(a, low + 1, r)
     }
 }
-
+//调用快速排序函数
 quickSort(original, 0, original.size() - 1)
+//输出排序后结果
 println(original)
