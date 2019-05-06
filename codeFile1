@@ -1,1 +1,13 @@
-import good.bad
+repeat i in range(50, 150) {
+    isPrime = true
+    repeat j in range(2,toNum(sqrt(i))) {
+        if i % j == 0 {
+            isPrime = false
+            break
+        }
+    }
+    if isPrime {
+        print(i)
+        print("  ")
+    }
+}

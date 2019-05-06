@@ -26,7 +26,7 @@ public class GrammarState {
         this.productions = productions;
         this.closureSet.addAll(this.productions);
 
-        System.out.println(stateNum);
+//        System.out.println(stateNum);
     }
 
     public void startTransition() {

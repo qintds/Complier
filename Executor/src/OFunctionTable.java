@@ -36,6 +36,10 @@ public class OFunctionTable {
         env.setXObjectByNameQualify("println", oFuncCreator("println"));
         env.setXObjectByNameQualify("type", oFuncCreator("type"));
         env.setXObjectByNameQualify("str", oFuncCreator("str"));
+        env.setXObjectByNameQualify("sqrt", oFuncCreator("sqrt"));
+        env.setXObjectByNameQualify("range", oFuncCreator("range"));
+        env.setXObjectByNameQualify("toNum", oFuncCreator("toNum"));
+
     }
 
     public XEnv getEnv() {
@@ -52,6 +56,12 @@ public class OFunctionTable {
                 return OFunction.printType(args);
             case "str":
                 return OFunction.str(args);
+            case "toNum":
+                return OFunction.toNum(args);
+            case "sqrt":
+                return OFunction.sqrt(args);
+            case "range":
+                return OFunction.range(args);
                 //list
             case "listAppend":
                 return OFunction.listAppend(args);

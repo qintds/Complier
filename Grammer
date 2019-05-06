@@ -18,8 +18,6 @@ ClassBodyDeclaration -> ClassMemberDeclaration
                        | FuncDeclaration
                        | ClassFuncDeclaration
 ClassMemberDeclaration -> IDENTIFIER = NoAssignExp
-
-
 ClassFuncDeclaration -> FUNC IDENTIFIER ( SELF , ParamList ) CompSt
 ClassFuncDeclaration -> FUNC IDENTIFIER ( SELF ) CompSt
 
@@ -43,10 +41,8 @@ TupleStart ->  Item , Item  TupleFollow
 TupleStart ->  Item , Item
 TupleFollow -> TupleFollow , Item | Item
 Item -> Primary | Dictionary | List | Tuple
-
 Tuple -> ( TupleStart )
 TupleNoBracket -> TupleStart
-
 ListAndTuple -> List | Tuple | TupleNoBracket
 
 
@@ -59,6 +55,7 @@ Stmt -> Exp ENTER
       | ReturnStmt ENTER
       | IfElseStmt ENTER
       | RepeatStmt ENTER
+
 ReturnStmt -> RETURN ReturnParam | RETURN
 ReturnParam -> NoAssignExp | ListAndTuple | Dictionary
 
@@ -70,16 +67,14 @@ IfElseStmt -> ElifStmt
 
 RepeatStmt -> REPEAT RepeatCond CompSt
 RepeatParam -> IDENTIFIER | RepeatParam , IDENTIFIER
+RepeatCond -> NoAssignExp
+            | RepeatParam IN IterateValue
 IterateValue -> Variable
               | Tuple
               | List
-RepeatCond -> NoAssignExp
-            | RepeatParam IN IterateValue
-
 
 
 FuncInvocation -> IDENTIFIER ( ) | IDENTIFIER ( Args )
-
 AssignableValue -> Variable . AssignableValue
                  | Variable [ Variable ]
                  | Variable [ STRING ]
@@ -91,20 +86,14 @@ Variable -> AssignableValue
           | Variable . FuncInvocation
           | FuncInvocation
           | SELF
-
 Primary -> ( NoAssignExp )
-         | Variable
-         | NUM
-         | REAL
-         | TRUE
-         | FALSE
+         | Variable | NUM | REAL | TRUE | FALSE
          | STRING
          | NONE
 
 UnaryExp -> Primary
           | - Primary
           | NOT Primary
-
 MultiplicativeExp -> UnaryExp
                    | MultiplicativeExp * UnaryExp
                    | MultiplicativeExp / UnaryExp
@@ -131,7 +120,6 @@ Assignment -> LeftSide = AssignmentExp
             | LeftSide = ListAndTuple
             | LeftSide = Dictionary
 LeftSide -> AssignableValue | ListAndTuple
-
 Exp -> AssignmentExp
 
 Args -> Args , Exp | Exp

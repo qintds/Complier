@@ -28,16 +28,20 @@ public class Parser {
 
     public static void main(String[] args) {
         ProductionManager productionManager = ProductionManager.getInstance();
-        System.out.println(GrammarInitializer.getInstance().productionNum);
+//        System.out.println(GrammarInitializer.getInstance().productionNum);
         productionManager.runFirstSet();
         // productionManager.printAllProductionOnly();
         GrammarStateManager stateManager = GrammarStateManager.getInstance();
         stateManager.buildTransitionStateMechine();
 
-        Lexer lexer = new Lexer("codeTest1");
+        String fileName = "codeFile";
+        if (args.length >0) {
+            fileName = args[0];
+        }
+        Lexer lexer = new Lexer(fileName);
         lexer.run();
 
-        printCF(lexer.presentFile);
+//        printCF(lexer.presentFile);
 
         LRStateTableParser lrParser = new LRStateTableParser(lexer.presentFile);
         lrParser.parse();

@@ -50,7 +50,7 @@ public class LRStateTableParser {
     public void parse() {
         while (true) {
             Integer action = getAction(statusStack.peek(), inputTag);
-
+//            stupidPrint();
             if (action == null) {
                 if (inputTag == Tag.LF) {
                     inputToken = nextToken();
@@ -150,5 +150,13 @@ public class LRStateTableParser {
 
     public CNode getProgram() {
         return treeBuilder.program;
+    }
+
+    private void stupidPrint() {
+        for (int i = 0; i < valueStack.size(); i++) {
+            System.out.print(valueStack.get(i));
+            System.out.print(' ');
+        }
+        System.out.println();
     }
 }
