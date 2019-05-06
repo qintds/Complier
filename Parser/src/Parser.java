@@ -34,7 +34,7 @@ public class Parser {
         GrammarStateManager stateManager = GrammarStateManager.getInstance();
         stateManager.buildTransitionStateMechine();
 
-        String fileName = "codeFile";
+        String fileName = null;
         if (args.length >0) {
             fileName = args[0];
         }

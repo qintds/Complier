@@ -10,11 +10,12 @@ public class StandardInputStream implements InputStreamInterface {
     public void open() {
         Scanner scan = new Scanner(System.in);
         while (true) {
+            System.out.print(">>  ");
             String line = scan.nextLine();
             if (line.equals("end")) {
                 break;
             }
-            inputBuffer += line;
+            inputBuffer += line + "\n";
         }
         scan.close();
     }

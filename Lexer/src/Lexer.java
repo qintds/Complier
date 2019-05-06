@@ -95,6 +95,7 @@ public class Lexer {
     }
 
     public Token scan() {
+        peek = peek;
         for( ; ; readch()) {
             if (peek == ' ' || peek == '\t')
                 continue;
